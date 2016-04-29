@@ -4,24 +4,33 @@
 $count = 1;
 if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
-	<article>
-		<?php if ( has_post_thumbnail() ) { ?><div class="featimage"><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a></div><?php } ?>
-		<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
-		<?php the_excerpt(); ?>
-		<?php if ( nuts_get_value ( 'source' ) ) echo '<p>'. nuts_get_value ( 'source_label' ) .' <a href="'.nuts_get_value ( 'source' ).'">'.nuts_get_value ( 'source' ).'</a></p>' ?>
-		<aside class="postmeta"><?php 
+	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+		<?php if ( has_post_thumbnail() ) { ?><div class="featimage size-<?php echo tpl_get_loop_image_size(); ?>"><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( tpl_get_loop_image_size() ); ?></a></div><?php } ?>
+		<h1<?php if ( !has_post_thumbnail() ) { echo ' class="nofeat"'; } ?>><a href="<?php the_permalink(); ?>"><?php
+			if ( get_the_title() != '' ) {
+				the_title();
+			}
+			else {
+				_e( '(Untitled)', 'themple-starter' );
+			} ?></a></h1>
+		<?php tpl_show_post_in_loop( $post, tpl_get_value( 'excerpt_format' ) ); ?>
+		<?php if ( tpl_get_value ( 'source' ) ) {
+			echo '<p>'. esc_html( tpl_get_value ( 'source_label' ) ) .' <a href="'. esc_url( tpl_get_value ( 'source' ) ) .'">'. esc_html( tpl_get_value ( 'source' ) ) .'</a></p>';
+		} ?>
+		<aside class="postmeta"><?php
 			$author = get_the_author();
 			$date = get_the_date( 'M j, Y' );
-			printf ( __('Posted by %1$s on %2$s' ,'nuts'), $author, $date ); ?></aside>
+			printf ( __('Posted by %1$s on %2$s' ,'themple-starter'), $author, $date ); ?></aside>
 	</article>
-	
+
 	<?php $count++;
-		if ( $count <= $wp_query->post_count ) echo '<hr>';
+		if ( $count <= $wp_query->post_count ) {
+			echo '<hr>';
+		}
 	?>
-	
+
 <?php endwhile; else: ?>
 
-	<p><?php _e('Sorry, no posts matched your criteria.'); ?></p>
-	
-<?php endif; ?>
-			
+	<p><?php _e( 'Sorry, no posts matched your criteria.', 'themple-starter' ); ?></p>
+
+<?php endif;

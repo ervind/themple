@@ -1,0 +1,568 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Themple 1.0\n"
+"POT-Creation-Date: 2016-04-20 11:36+0200\n"
+"PO-Revision-Date: 2015-12-28 09:23+0100\n"
+"Last-Translator: Ervin Domonkos <ervin.domonkos@gmail.com>\n"
+"Language-Team: Arachnoidea <info@arachnoidea.com>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: framework\n"
+
+#: comments.php:14
+#, php-format
+msgid "One thought on &ldquo;%2$s&rdquo;"
+msgid_plural "%1$s thoughts on &ldquo;%2$s&rdquo;"
+msgstr[0] ""
+msgstr[1] ""
+
+#: comments.php:24
+msgid "Reply to this"
+msgstr ""
+
+#: comments.php:41
+msgid "Comments are closed."
+msgstr ""
+
+#: inc/functions-comments.php:19
+msgid "Posted on"
+msgstr ""
+
+#: inc/functions-comments.php:26
+#, php-format
+msgid "by %s"
+msgstr ""
+
+#: inc/functions-comments.php:35
+msgid "Edit this comment"
+msgstr ""
+
+#: inc/functions-comments.php:38
+msgid "Your comment is awaiting moderation."
+msgstr ""
+
+#: inc/functions-images.php:11
+msgid "Post Thumbnail"
+msgstr ""
+
+#: inc/functions-images.php:18
+msgid "Logo size"
+msgstr ""
+
+#: inc/functions-images.php:25
+msgid "Full Width"
+msgstr ""
+
+#: inc/functions-images.php:32
+msgid "Small Thumbnail"
+msgstr ""
+
+#: inc/functions-init.php:20
+msgid "Primary Menu"
+msgstr ""
+
+#: inc/functions-widget.php:11 options/post-options.php:13
+#: options/theme-options.php:235 options/theme-options.php:253
+msgid "Right sidebar"
+msgstr ""
+
+#: inc/functions-widget.php:13
+msgid "Sidebar displayed in the right column"
+msgstr ""
+
+#: inc/functions-widget.php:23
+msgid "Footer sidebar #1"
+msgstr ""
+
+#: inc/functions-widget.php:34
+msgid "Footer sidebar #2"
+msgstr ""
+
+#: inc/functions-widget.php:45
+msgid "Footer sidebar #3"
+msgstr ""
+
+#: inc/functions-widget.php:56
+msgid "Footer sidebar #4"
+msgstr ""
+
+#: loop-blog.php:21
+msgid "(Untitled)"
+msgstr ""
+
+#: loop-blog.php:30 loop.php:24
+#, php-format
+msgid "Posted by %1$s on %2$s"
+msgstr ""
+
+#: loop-blog.php:41 loop-page.php:22 loop.php:37
+msgid "Sorry, no posts matched your criteria."
+msgstr ""
+
+#: loop.php:30
+msgid "Categories"
+msgstr ""
+
+#: options/post-options.php:7
+msgid "Post Layout"
+msgstr ""
+
+#: options/post-options.php:8
+msgid "Layout of this post. If not specified, the global seting is used."
+msgstr ""
+
+#: options/post-options.php:12 options/theme-options.php:234
+#: options/theme-options.php:252
+msgid "Full width"
+msgstr ""
+
+#: options/post-options.php:14 options/theme-options.php:236
+#: options/theme-options.php:254
+msgid "Left sidebar"
+msgstr ""
+
+#: options/post-options.php:15
+msgid "Inherit"
+msgstr ""
+
+#: options/post-options.php:26
+msgid "Excerpt Format"
+msgstr ""
+
+#: options/post-options.php:27
+msgid ""
+"Format of the excerpt in the loop.<br>\n"
+"\t\t\t<b>Default:</b> unformatted excerpt if no more tag was used. Else use "
+"the standard formatting until the more tag.<br>\n"
+"\t\t\t<b>Formatted:</b> uses the formatted first part of the article<br>\n"
+"\t\t\t<b>Unformatted:</b> uses the unformatted excerpt of the article<br>\n"
+"\t\t\t<b>Full:</b> full article is displayed in the loop"
+msgstr ""
+
+#: options/post-options.php:35
+msgid "Default"
+msgstr ""
+
+#: options/post-options.php:36
+msgid "Formatted"
+msgstr ""
+
+#: options/post-options.php:37
+msgid "Unformatted"
+msgstr ""
+
+#: options/post-options.php:38
+msgid "Full"
+msgstr ""
+
+#: options/post-options.php:49
+msgid "Source link"
+msgstr ""
+
+#: options/post-options.php:50
+msgid "Source URL of the original article."
+msgstr ""
+
+#: options/post-options.php:54
+msgid "Enter a URL here"
+msgstr ""
+
+#: options/sections.php:8 options/sections.php:10
+msgid "General"
+msgstr ""
+
+#: options/sections.php:9
+msgid "General options for the theme and most of its elements"
+msgstr ""
+
+#: options/sections.php:17 options/sections.php:19
+msgid "Header"
+msgstr ""
+
+#: options/sections.php:18
+msgid "Options for the header, logo, etc."
+msgstr ""
+
+#: options/sections.php:26 options/sections.php:28
+msgid "Colors"
+msgstr ""
+
+#: options/sections.php:27
+msgid "Set up the theme colors here"
+msgstr ""
+
+#: options/sections.php:35 options/sections.php:37
+msgid "Content"
+msgstr ""
+
+#: options/sections.php:36
+msgid "Options for the posts content"
+msgstr ""
+
+#: options/sections.php:44 options/sections.php:46
+msgid "Footer"
+msgstr ""
+
+#: options/sections.php:45
+msgid "Options for the footer"
+msgstr ""
+
+#: options/sections.php:56
+msgid "Post Layouts"
+msgstr ""
+
+#: options/sections.php:57
+msgid "Choose the layout options for this post here"
+msgstr ""
+
+#: options/sections.php:65
+msgid "Post Options"
+msgstr ""
+
+#: options/sections.php:66
+msgid "This is an example metabox section"
+msgstr ""
+
+#: options/theme-options.php:7
+msgid "Maximum width of the theme"
+msgstr ""
+
+#: options/theme-options.php:8
+msgid ""
+"This is the maximum width in pixels, under this value the theme will behave "
+"responsively."
+msgstr ""
+
+#: options/theme-options.php:15 options/theme-options.php:52
+#: options/theme-options.php:110
+msgid "Enter a number here"
+msgstr ""
+
+#: options/theme-options.php:23
+msgid "Basic theme font"
+msgstr ""
+
+#: options/theme-options.php:24
+msgid ""
+"The values for the basic font declaration for the theme. You can override "
+"these in your style files."
+msgstr ""
+
+#: options/theme-options.php:30
+msgid "Font family"
+msgstr ""
+
+#: options/theme-options.php:31
+msgid "Font family of the basic font"
+msgstr ""
+
+#: options/theme-options.php:34
+msgid "Arial"
+msgstr ""
+
+#: options/theme-options.php:35
+msgid "Times New Roman"
+msgstr ""
+
+#: options/theme-options.php:36
+msgid "Verdana"
+msgstr ""
+
+#: options/theme-options.php:40
+msgid "Select font family"
+msgstr ""
+
+#: options/theme-options.php:44
+msgid "Font size"
+msgstr ""
+
+#: options/theme-options.php:45
+msgid "Enter default font size in pixels."
+msgstr ""
+
+#: options/theme-options.php:56
+msgid "Font weight"
+msgstr ""
+
+#: options/theme-options.php:57
+msgid "Font weight / boldness of the basic font"
+msgstr ""
+
+#: options/theme-options.php:60
+msgid "Thin"
+msgstr ""
+
+#: options/theme-options.php:61
+msgid "Extra Light"
+msgstr ""
+
+#: options/theme-options.php:62
+msgid "Light"
+msgstr ""
+
+#: options/theme-options.php:63
+msgid "Normal"
+msgstr ""
+
+#: options/theme-options.php:64
+msgid "Medium"
+msgstr ""
+
+#: options/theme-options.php:65
+msgid "Semi Bold"
+msgstr ""
+
+#: options/theme-options.php:66
+msgid "Bold"
+msgstr ""
+
+#: options/theme-options.php:67
+msgid "Extra Bold"
+msgstr ""
+
+#: options/theme-options.php:68
+msgid "Black / Heavy"
+msgstr ""
+
+#: options/theme-options.php:75
+msgid "Font color"
+msgstr ""
+
+#: options/theme-options.php:76
+msgid "You can modify the main body text color here."
+msgstr ""
+
+#: options/theme-options.php:88
+msgid "Theme Logo"
+msgstr ""
+
+#: options/theme-options.php:89
+msgid "Please upload your website's logo here."
+msgstr ""
+
+#: options/theme-options.php:100
+msgid "Top margin above the logo"
+msgstr ""
+
+#: options/theme-options.php:101
+msgid "Enter the top margin value in pixels."
+msgstr ""
+
+#: options/theme-options.php:118
+msgid "Horizontal position of the logo"
+msgstr ""
+
+#: options/theme-options.php:119
+msgid "The logo will be placed to this side of the header"
+msgstr ""
+
+#: options/theme-options.php:123
+msgid "Left"
+msgstr ""
+
+#: options/theme-options.php:124
+msgid "Center"
+msgstr ""
+
+#: options/theme-options.php:125
+msgid "Right"
+msgstr ""
+
+#: options/theme-options.php:136
+msgid "Social icons"
+msgstr ""
+
+#: options/theme-options.php:137
+msgid "These are the social icons displayed in the header"
+msgstr ""
+
+#: options/theme-options.php:144
+msgid "Font Awesome Icon Code"
+msgstr ""
+
+#: options/theme-options.php:145
+msgid "The Font Awesome code of the icon (uses the fa-xxx name structure)"
+msgstr ""
+
+#: options/theme-options.php:151
+msgid "Icon URL"
+msgstr ""
+
+#: options/theme-options.php:152
+msgid "Where should the icon be linked to?"
+msgstr ""
+
+#: options/theme-options.php:157
+msgid "Icon Title"
+msgstr ""
+
+#: options/theme-options.php:158
+msgid "This is displayed when hovering the mouse over the icon"
+msgstr ""
+
+#: options/theme-options.php:163
+msgid "Icon Color"
+msgstr ""
+
+#: options/theme-options.php:164
+msgid "What should be the color of this icon?"
+msgstr ""
+
+#: options/theme-options.php:176
+msgid "Theme basic color scheme"
+msgstr ""
+
+#: options/theme-options.php:177
+msgid ""
+"Please select a color. It will be the base of your color scheme. Change it "
+"and test how your site responds to it."
+msgstr ""
+
+#: options/theme-options.php:188
+msgid "Heading elements"
+msgstr ""
+
+#: options/theme-options.php:189
+msgid "Please select a color for the heading (h1 .. h6) elements."
+msgstr ""
+
+#: options/theme-options.php:200
+msgid "Color for anchor tags / links inside the content area"
+msgstr ""
+
+#: options/theme-options.php:201
+msgid ""
+"This color is linked by default to post content, but not to header and "
+"footer."
+msgstr ""
+
+#: options/theme-options.php:212
+msgid "Link inverse effect"
+msgstr ""
+
+#: options/theme-options.php:213
+msgid "Should the links use inverse colors while hovering the mouse over them?"
+msgstr ""
+
+#: options/theme-options.php:217
+msgid "No"
+msgstr ""
+
+#: options/theme-options.php:218
+msgid "Yes"
+msgstr ""
+
+#: options/theme-options.php:229
+msgid "General post layout"
+msgstr ""
+
+#: options/theme-options.php:230
+msgid "Global seting for the layout of the blog posts"
+msgstr ""
+
+#: options/theme-options.php:247
+msgid "Index page layout"
+msgstr ""
+
+#: options/theme-options.php:248
+msgid "Layout setting for the blog index page (and other archive pages)"
+msgstr ""
+
+#: options/theme-options.php:265
+msgid "Read more text"
+msgstr ""
+
+#: options/theme-options.php:266
+msgid "The read more text after the post excerpts in blog view."
+msgstr ""
+
+#: options/theme-options.php:270
+msgid "Read more..."
+msgstr ""
+
+#: options/theme-options.php:278
+msgid "Label for the source"
+msgstr ""
+
+#: options/theme-options.php:279
+msgid ""
+"The text label that's displayed before the source link right after the post "
+"contents."
+msgstr ""
+
+#: options/theme-options.php:283
+msgid "Source:"
+msgstr ""
+
+#: options/theme-options.php:291
+msgid "File upload button text"
+msgstr ""
+
+#: options/theme-options.php:292
+msgid "This text will be displayed on the file upload buttons."
+msgstr ""
+
+#: options/theme-options.php:296
+msgid "Upload File"
+msgstr ""
+
+#: options/theme-options.php:304
+msgid "Newer Posts link text"
+msgstr ""
+
+#: options/theme-options.php:305
+msgid "Newer posts text used for pagination in blog view."
+msgstr ""
+
+#: options/theme-options.php:309
+msgid "Newer Posts"
+msgstr ""
+
+#: options/theme-options.php:317
+msgid "Older Posts link text"
+msgstr ""
+
+#: options/theme-options.php:318
+msgid "Older posts text used for pagination in blog view."
+msgstr ""
+
+#: options/theme-options.php:322
+msgid "Older Posts"
+msgstr ""
+
+#: options/theme-options.php:330
+msgid "Copyright Text"
+msgstr ""
+
+#: options/theme-options.php:331
+msgid "Copyright Text in the footer's bottom line."
+msgstr ""
+
+#: options/theme-options.php:336
+msgid "&copy; Copyright 2016"
+msgstr ""
+
+#: search.php:19
+msgid "empty search term"
+msgstr ""
+
+#: search.php:21
+msgid "Searched for:"
+msgstr ""
+
+#: searchform.php:3
+msgid "Search"
+msgstr ""
+
+#: searchform.php:4
+msgid "Go"
+msgstr ""

@@ -1,0 +1,124 @@
+/* Reset the most basic selectors for the same look in all browsers + add some basic styles */
+
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+	box-sizing: border-box;
+	-ms-word-wrap: break-word;
+	word-wrap: break-word;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+body {
+	line-height: 1;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+input, select, textarea, button {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	border-radius: 0;
+}
+
+select {
+	border-radius: 0;
+}
+
+textarea {
+	overflow: auto;
+}
+
+strong, b {
+	font-weight: bold;
+}
+
+em, i {
+    font-style: italic;
+}
+
+abbr {
+	cursor: help;
+	border-bottom: 1px dotted;
+	text-decoration: none;
+}
+
+kbd, samp {
+	font-family: monospace;
+}
+
+sup {
+	font-size: 0.7em;
+	vertical-align: top;
+	position: relative;
+	top: -0.3em;
+}
+
+sub {
+	font-size: 0.7em;
+	vertical-align: bottom;
+	position: relative;
+	bottom: -0.3em;
+}
+
+small {
+	font-size: 60%;
+}
+
+
+
+// Reset of Placeholder text behaviour
+@placeholder-color: #666;
+:focus::-webkit-input-placeholder { color: transparent; }
+:focus::-moz-placeholder          { color: transparent; } /* Firefox 19+ */
+:focus:-moz-placeholder           { color: transparent; } /* Firefox 18 */
+:focus:-ms-input-placeholder      { color: transparent; }
+::-webkit-input-placeholder       { color: @placeholder-color; }
+::-moz-placeholder                { color: @placeholder-color; opacity: 1; } /* Firefox 19+ */
+:-moz-placeholder                 { color: @placeholder-color; opacity: 1; } /* Firefox 18 */
+:-ms-input-placeholder            { color: @placeholder-color !important; }
+::placeholder                     { color: @placeholder-color; }
+
+
+
+// Define image alignments for WordPress
+.alignleft {
+	float: left;
+}
+
+.alignright {
+	float: right;
+}
+
+.aligncenter {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.clearfix, .clear {
+	clear: both;
+}

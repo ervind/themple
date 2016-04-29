@@ -1,0 +1,35 @@
+// Grid.less - the Grid system for Themple Starter
+
+.row:before,
+.row:after {
+    content: "";
+    display: table;
+}
+
+.row:after {
+    clear: both;
+}
+
+.column, [class*="column-"] {
+    position: relative;
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.input-elements( @i ) when ( @i < 6 ) {
+	input, select, textarea, button {
+		width: 100%;
+	}
+}
+
+.generate-columns( @n, @i: 1 ) when ( @i =< @n ) {
+    .column-@{i} {
+        width: ( @i * 100% / @n );
+
+		.input-elements( @i );
+    }
+    .generate-columns( @n, ( @i + 1 ) );
+}
+
+.generate-columns( 12 );

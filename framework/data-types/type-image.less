@@ -1,0 +1,28 @@
+// Image uploader
+.uploader {
+
+	.image-container {
+		height: 150px;
+		width: 150px;
+		position: relative;
+		float: left;
+		margin-right: 16px;
+
+		.closer {
+			position: absolute;
+			top: -5px;
+			right: -5px;
+
+			&::before {
+				content: "\00d7";
+				font-weight: bold;
+				font-size: 40px;
+			}
+		}
+	}
+
+	img {
+		cursor: pointer;
+	}
+
+}

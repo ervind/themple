@@ -1,8 +1,42 @@
 // You can add your custom mixins and variables here
 
-.starter-roundbox ( @vpadding: 0; @hpadding: 14px ) {
-	background-color: @acolor;
-	color: #fff;
+
+// Standard style used by sidebar titles and form elements
+.titlebox ( @vpadding: 0; @hpadding: 14px; @color: @acolor ) {
+	background-color: @color;
+	color: #000;
 	padding: @vpadding @hpadding;
-	border-radius: 30px;
+}
+
+
+// Highlights the current menu item and its ancestors
+.menu-highlighter() {
+	&.current-menu-ancestor {
+		text-shadow: 0px 0px 2px #fff;
+
+		li:not(.current-menu-ancestor) {
+			text-shadow: none;
+		}
+
+		li.current-menu-item {
+			text-shadow: 0px 0px 2px #fff;
+		}
+	}
+
+	&.current-menu-item {
+		text-shadow: 0px 0px 2px #fff;
+
+		li {
+			text-shadow: none;
+		}
+	}
+}
+
+
+// Invert the links when enabled in Theme Options
+.link-invert( @color: @link_color ) {
+	&:hover when ( @link_hover = yes ) {
+		background-color: @color;
+		color: #fff;
+	}
 }
