@@ -1,0 +1,15 @@
+{
+	"dt_files": [
+		"class-data-type",
+		"type-static",
+		"type-text",
+		"type-textarea",
+		"type-color",
+		"type-image",
+		"type-number",
+		"type-select",
+		"type-font_awesome",
+		"type-combined",
+		"type-icon"
+	]
+}

@@ -1,0 +1,63 @@
+// Some basic Mixins that makes your life easier and fixes some browser issues.
+
+
+
+
+
+// Creates a border for a box element with the specified color, border-width and border-radius
+.box-border ( @border-color , @border-width: 1px , @border-radius: 0 ) when ( @border-radius = 0 ) {
+	border: @border-width solid @border-color;
+}
+
+.box-border ( @border-color , @border-width: 1px , @border-radius: 0 ) when ( @border-radius > 0 ) {
+	border: @border-width solid @border-color;
+	.border-radius ( @border-radius );
+}
+
+
+
+
+
+// Make cross-browser linear gradients
+.linear-gradient ( @start-color , @end-color ) {
+	background-image: -webkit-linear-gradient( top, @start-color, @end-color );
+	background-image:    -moz-linear-gradient( top, @start-color, @end-color );
+	background-image:      -o-linear-gradient( top, @start-color, @end-color );
+	background-image: linear-gradient( to bottom, @start-color 0%, @end-color 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=@start-color, endColorstr=@end-color, GradientType=0 );
+}
+
+
+
+
+
+// Draws triangle with CSS only
+
+.triangle ( @size , @color, @orientation: right ) {
+	width:			0;
+	height:			0;
+}
+
+.triangle ( @size , @color, @orientation: right ) when ( @orientation = up ) {
+	border-left: 	@size solid transparent;
+	border-right: 	@size solid transparent;
+	border-bottom: 	@size solid @color;
+}
+
+.triangle ( @size , @color, @orientation: right ) when ( @orientation = down ) {
+	border-left: 	@size solid transparent;
+	border-right: 	@size solid transparent;
+	border-top: 	@size solid @color;
+}
+
+.triangle ( @size , @color, @orientation: right ) when ( @orientation = right ) {
+	border-top: 	@size solid transparent;
+	border-bottom: 	@size solid transparent;
+	border-left: 	@size solid @color;
+}
+
+.triangle ( @size , @color, @orientation: right ) when ( @orientation = left ) {
+	border-top: 	@size solid transparent;
+	border-bottom: 	@size solid transparent;
+	border-right: 	@size solid @color;
+}
