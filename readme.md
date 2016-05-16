@@ -11,3 +11,6 @@
 
 **- Themple Helper plugin**  
 /plugins/themple-helper
+
+## Documentation on this package  
+Visit http://arachnoidea.com/themple-framework/
