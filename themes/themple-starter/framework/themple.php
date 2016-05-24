@@ -7,7 +7,7 @@ For more information and documentation, visit [http://www.arachnoidea.com/thempl
 
 
 // Version number of the framework
-define( 'THEMPLE_VERSION', '1.2a1' );
+define( 'THEMPLE_VERSION', '1.2a2' );
 
 
 
@@ -784,9 +784,10 @@ function tpl_theme_options_callback ( $args ) {
 			echo '<button class="repeat-add">' . __( 'Add row', 'themple' ) . '</button>';
 		}
 
-		if ( isset( $args["description"] ) && ( $args["description"] != "" ) ) {
-			echo '</td></tr><tr><td class="optiondesc clearfix" colspan="2">'. $args["description"];
+		if ( !isset( $args["description"] ) ) {
+			$args["description"] = "";
 		}
+		echo '</td></tr><tr><td class="optiondesc clearfix" colspan="2">'. $args["description"];
 
 	}
 
@@ -1288,6 +1289,8 @@ function tpl_admin_vars_to_js() {
 
 	global $tpl_options_array;
 	$to_js = array();
+	$screen = get_current_screen();
+	$post_type = str_replace( 'appearance_page_tpl_', '', $screen->id );
 
 	foreach ( $tpl_options_array as $option ) {
 
@@ -1297,6 +1300,19 @@ function tpl_admin_vars_to_js() {
 
 				$func_name = $option->js_func;
 				$to_js[$option->name] = $option->$func_name();
+
+			}
+
+		}
+
+		// Add the conditional options as they will be used in admin
+		if ( $option->get_conditions() !== false ) {
+
+			if ( tpl_has_section_post_type ( $option->section, $post_type ) ) {
+
+				foreach ( $option->get_conditions() as $key => $value ) {
+					$to_js["Conditions"][$key] = $value;
+				}
 
 			}
 

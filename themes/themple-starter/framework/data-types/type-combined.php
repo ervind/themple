@@ -24,6 +24,7 @@ class TPL_Combined extends TPL_Data_Type {
 			$parts_objects[$part["name"]] = new $type_class( $part );
 			$parts_objects[$part["name"]]->form_ref_base = $this->name;
 			$parts_objects[$part["name"]]->is_subitem = true;
+			$parts_objects[$part["name"]]->parent = $this->name;
 
 		}
 
@@ -299,6 +300,32 @@ class TPL_Combined extends TPL_Data_Type {
 		}
 
 		return $js_arr;
+
+	}
+
+
+	// Return the conditions (if any) for this option
+	public function get_conditions() {
+
+		$conditions = array();
+
+		if ( isset( $this->condition ) ) {
+			$conditions[$this->name] = $this->condition;
+		}
+
+		foreach ( $this->parts as $part ) {
+			if ( isset( $part->condition ) ) {
+				$cname = $this->name . '/' . $part->name;
+				$conditions[$cname] = $part->condition;
+			}
+		}
+
+		if ( !empty( $conditions ) ) {
+			return $conditions;
+		}
+		else {
+			return false;
+		}
 
 	}
 

@@ -28,7 +28,7 @@ class TPL_Color extends TPL_Data_Type {
 			$value = $this->get_current_option();
 		}
 
-		echo '<input name="' . $this->form_ref() . '" type="text" value="' . esc_attr( $value ) . '" class="tpl-color-field" data-default-color="' . $this->default . '" />';
+		echo '<input name="' . $this->form_ref() . '" id="' . $this->form_ref() . '" type="text" value="' . esc_attr( $value ) . '" class="tpl-color-field" data-default-color="' . $this->default . '" />';
 
 		echo '</div>';
 

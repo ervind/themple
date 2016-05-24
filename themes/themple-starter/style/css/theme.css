@@ -2428,7 +2428,7 @@ TABLE OF CONTENTS
 -----------------
 */
 body {
-  font: 300 14px "Arial";
+  font: 400 14px "Arial";
   color: #666666;
   background: #fff;
 }
@@ -2757,7 +2757,7 @@ select::-ms-expand {
   line-height: 1.8em;
 }
 .file-wrapper::before {
-  content: "Choose a file to upload";
+  content: "Upload File";
   display: inline-block;
   background-color: #cccccc;
   color: #000;
@@ -2780,7 +2780,7 @@ textarea {
 */
 .logo-wrapper {
   text-align: left;
-  padding-top: 60px;
+  padding-top: 30px;
   padding-bottom: 20px;
 }
 .logo-wrapper a {
@@ -3317,13 +3317,6 @@ footer .simple_tweet_widget img {
   }
   #wrapper {
     padding-bottom: 80px;
-  }
-  .headertop {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-  .logo-wrapper {
-    padding-top: 40px;
   }
   .menu-wrapper nav {
     padding-top: 44px;

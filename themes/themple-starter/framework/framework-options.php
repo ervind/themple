@@ -93,6 +93,14 @@ $tpl_option_array = array (
 	),
     "default"		=> 'yes',
     "key"           => true,
+	"condition"		=> array(
+		array(
+			"type"		=> 'option',
+			"name"		=> 'less_compiler',
+			"relation"	=> '!=',
+			"value"		=> 'off',
+		),
+	),
 );
 tpl_register_option ( $tpl_option_array );
 

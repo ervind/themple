@@ -16,6 +16,7 @@ TABLE OF CONTENTS
 4. Common settings
 	4.1 Tabs in the backend
 	4.2 Hover messages on icons
+5. Conditional settings
 
 */
 
@@ -88,7 +89,7 @@ TABLE OF CONTENTS
             var attachment = custom_uploader.state().get('selection').first().toJSON();
 			imgurl.attr('src', attachment.sizes.thumbnail.url);
 			imgurl.show();
-			current_item.find('.img_id').val(attachment.id);
+			current_item.find('.img_id').val(attachment.id).trigger('change');
 			current_item.find('.placeholder').hide();
 			current_item.find('.closer').show();
         });
@@ -107,7 +108,7 @@ TABLE OF CONTENTS
 		imgurl.attr('src', '');
 		current_item.find('.placeholder').show();
         current_item.find('.uploaded-image').hide();
-		$(this).closest('.tpl-field').find('.img_id').val('');
+		$(this).closest('.tpl-field').find('.img_id').val('').trigger('change');
 		$(this).hide();
 
 	});
@@ -122,11 +123,19 @@ TABLE OF CONTENTS
 
 */
 
+	var color_picker_settings = {
+		width : 258,
+		change : function(event,ui){
+			$(this).val($(this).wpColorPicker('color'));
+			tpl_condition_updater();
+		}
+	}
 
 	// Color picker script
-    $('.tpl-color-field').wpColorPicker({
-		width : 258
+    $('.tpl-color-field').each(function(){
+		$(this).wpColorPicker( color_picker_settings );
 	});
+
 
 
 
@@ -171,7 +180,7 @@ TABLE OF CONTENTS
 			$('.uploaded-image', just_added).hide();
 			$('.closer', just_added).hide();
 			$('.placeholder', just_added).show();
-			$('.img_id', just_added).val('');
+			$('.img_id', just_added).val('').trigger('change');
 		}
 		else {
 			container.find('.repeat').last().find('input[type=text]').val('');
@@ -185,7 +194,7 @@ TABLE OF CONTENTS
 			$('.wp-picker-container', just_added).remove();
 			$('.datatype-container', just_added).html(orig_input);
 			$('.tpl-color-field', just_added).show();
-			$('.tpl-color-field', just_added).wpColorPicker();
+			$('.tpl-color-field', just_added).wpColorPicker( color_picker_settings );
 		}
 
 		// Special modifications for Select fields
@@ -207,7 +216,7 @@ TABLE OF CONTENTS
 				$('.uploaded-image', this).hide();
 				$('.closer', this).hide();
 				$('.placeholder', this).show();
-				$('.img_id', this).val('');
+				$('.img_id', this).val('').trigger('change');
 			});
 
 			just_added.find('.color').each(function(){
@@ -216,7 +225,7 @@ TABLE OF CONTENTS
 				$(this).html(orig_input);
 				$('.tpl-color-field', this).show();
 				$('.tpl-color-field', this).val( $('.tpl-color-field', this).attr('data-default-color') );
-				$('.tpl-color-field', this).wpColorPicker();
+				$('.tpl-color-field', this).wpColorPicker( color_picker_settings );
 			});
 
 			// Special modifications for Select fields
@@ -232,7 +241,7 @@ TABLE OF CONTENTS
 
 		}
 
-		repeater_refresh(container);
+		tpl_repeater_refresh(container);
 
 	});
 
@@ -256,7 +265,7 @@ TABLE OF CONTENTS
 			else {
 				container.find('.tpl-field input').val('');
 			}
-			repeater_refresh(container);
+			tpl_repeater_refresh(container);
 		}
 
 	});
@@ -267,7 +276,7 @@ TABLE OF CONTENTS
 	$('.repeater').sortable({
 		handle : '.arranger',
 		update : function( event, ui ) {
-			repeater_refresh( $(this) );
+			tpl_repeater_refresh( $(this) );
 		},
 		start : function( event, ui ){
         	ui.placeholder.height( ui.item.height() );
@@ -276,7 +285,7 @@ TABLE OF CONTENTS
 
 
 	// Update order numbers after repeater item added, removed or rearranged
-	function repeater_refresh(container){
+	function tpl_repeater_refresh(container){
 
 		var i = 0;
 		container.find('.repeat').each(function(){
@@ -365,6 +374,332 @@ TABLE OF CONTENTS
 	});
 
 
+
+
+/*
+
+	5. CONDITIONAL SETTINGS
+	=======================
+
+*/
+
+
+	// Retrieves (name) parameter's value from (url)
+	function tpl_get_url_param(name, url) {
+	    if (!url) url = window.location.href;
+	    name = name.replace(/[\[\]]/g, "\\$&");
+	    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+	        results = regex.exec(url);
+	    if (!results) return null;
+	    if (!results[2]) return '';
+	    return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
+
+
+	// Checks the current post type in admin
+	function tpl_get_post_type(){
+		var attrs, attr, post_type;
+		post_type = null;
+
+		attrs = $( 'body' ).attr( 'class' ).split( ' ' );
+		$( attrs ).each(function() {
+			if ( 'post-type-' === this.substr( 0, 10 ) ) {
+				post_type = this.split( 'post-type-' );
+				post_type = post_type[ post_type.length - 1 ];
+				return;
+			}
+		});
+
+		return post_type;
+	}
+
+
+	// Checks if a variable is numeric
+	function isNumeric(n) {
+		return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+
+
+	// Updates the state of the conditional options. Use it after every change in the conditions.
+	function tpl_condition_updater() {
+		var url = window.location.href;
+		// Primary Options page (Theme Options, Framework Options)
+		if ( url.indexOf('themes.php') > -1 ) {
+			var section = tpl_get_url_param('page', url);
+			var container = 'tr';
+		}
+		// Post options branch
+		if ( url.indexOf('post.php') > -1 ) {
+			var section = '';
+			var container = '.meta-option';
+		}
+
+		$('.tpl-field').each(function(){
+
+			var option_name = $(this).attr('data-name');
+
+			// Do things only if the condition is registered in the Conditions object
+			if ( Themple_Admin.Conditions[option_name] !== undefined ) {
+
+				var Olength = Object.keys(Themple_Admin.Conditions[option_name]).length;
+				var ci;
+				var matches = [];
+
+				for ( ci = 0; ci < Olength; ++ci ) {
+
+
+					if ( typeof( Themple_Admin.Conditions[option_name][ci] ) !== 'undefined' ) {
+
+						var condition_type = Themple_Admin.Conditions[option_name][ci]["type"];
+						var condition_name = Themple_Admin.Conditions[option_name][ci]["name"];
+						var condition_relation = Themple_Admin.Conditions[option_name][ci]["relation"];
+						var condition_value = Themple_Admin.Conditions[option_name][ci]["value"];
+						var base_id = '';
+						var base_val = '';
+						var cname_array = [];
+
+
+						// If the condition is an option
+						if ( condition_type == 'option' ) {
+
+							// Modifications on the name if it's a cobined field
+							if ( condition_name.indexOf( '/' ) > -1 ) {
+
+								cname_array = condition_name.split("/");
+
+								// Add 0 as the instance number if there's no instance number defined
+								if ( !isNumeric( cname_array[1] ) ) {
+									cname_array.splice( 1, 0, 0 );
+								}
+
+								if ( cname_array[0] == "_THIS_" ) {
+									cname_array[0] = $(this).parent().closest('.tpl-field').attr('data-name');
+									cname_array[1] = $(this).parent().closest('.tpl-field').attr('data-instance');
+								}
+
+							}
+
+							else {
+
+								cname_array[0] = condition_name;
+								cname_array[1] = 0;
+
+							}
+
+
+							// Primary section branch for getting the base values
+							// base_id: ID of the element that's the base of the condition
+							if ( section != '' ) {
+								base_id = '#' + section + '\\[' + cname_array[0] + '\\]\\[' + cname_array[1] + '\\]';
+								if ( cname_array[2] !== undefined ) {
+									base_id += '\\[' + cname_array[2] + '\\]';
+								}
+							}
+							// We're now at the point where we can set up the section for the post option
+							// After that we get the value of the base element
+							else {
+								section = $(this).closest('.postbox').attr('id');
+								base_id = '#' + section + '_' + cname_array[0] + '\\[' + cname_array[1] + '\\]';
+								if ( cname_array[2] !== undefined ) {
+									base_id += '\\[' + cname_array[2] + '\\]';
+								}
+							}
+
+							// base_val: the base element's value
+							base_val = $(base_id).val();
+
+						}
+
+
+						// If the condition is a post type
+						if ( condition_type == 'post' ) {
+
+							// In this case base_val is the post type caught from the current post
+							if ( condition_name == 'type' ) {
+
+								base_val = tpl_get_post_type();
+
+							}
+
+							// In this case base_val is the ID of a specific post
+							if ( condition_name == 'id' ) {
+
+								base_val = tpl_get_url_param( 'post', url );
+
+							}
+
+						}
+
+
+						// If the condition is a page template
+						if ( condition_type == 'page' ) {
+
+							// In this case base_val is the post type caught from the current post
+							if ( condition_name == 'template' ) {
+
+								base_val = $('#page_template').val();
+
+							}
+
+						}
+
+
+						// If the condition is a taxonomy
+						if ( condition_type == 'taxonomy' ) {
+
+							// Post formats are a special case
+							if ( condition_name == 'post_format' ) {
+
+								$('#post-formats-select input').each(function(){
+									if ( $(this).is(':checked') ) {
+										base_val = $(this).attr('id').replace( 'post-format-', '' );
+									}
+								});
+
+							}
+
+							// Other taxonomies work in the same way (except tags - they are not supported at the moment)
+							else {
+
+								var base_val = [];
+								var cat_no = 0;
+								$('#' + condition_name + 'checklist li').each(function(){
+									cat_no = $(this).attr('id').replace( condition_name + '-', '' );
+									if ( $('input', this).is(':checked') ) {
+										base_val.push( cat_no );
+									}
+								});
+
+							}
+
+						}
+
+
+						// Setting up the results of the relations
+						switch ( condition_relation ) {
+							case '=':
+								if ( $.isArray( base_val ) ) {
+									if ( $.inArray( condition_value, base_val ) > -1 ) {
+										matches.push( true );
+									}
+									else {
+										matches.push( false );
+									}
+								}
+								else {
+									if ( base_val == condition_value ) {
+										matches.push( true );
+									}
+									else {
+										matches.push( false );
+									}
+								}
+								break;
+							case '!=':
+								if ( $.isArray( base_val ) ) {
+									if ( $.inArray( condition_value, base_val ) < 0 ) {
+										matches.push( true );
+									}
+									else {
+										matches.push( false );
+									}
+								}
+								else {
+									if ( base_val != condition_value ) {
+										matches.push( true );
+									}
+									else {
+										matches.push( false );
+									}
+								}
+								break;
+							case '<':
+								if ( base_val < condition_value ) {
+									matches.push( true );
+								}
+								else {
+									matches.push( false );
+								}
+								break;
+							case '>':
+								if ( base_val > condition_value ) {
+									matches.push( true );
+								}
+								else {
+									matches.push( false );
+								}
+								break;
+						}
+
+					}
+
+
+				} // Conditions FOR cycle
+
+
+				// Now displaying it or not based on the results
+				var met = false;
+				var logic = 'and';
+
+				if ( Themple_Admin.Conditions[option_name]["logic"] !== undefined ) {
+					var logic = Themple_Admin.Conditions[option_name]["logic"];
+				}
+
+				// If logic is (and) and there is no FALSE result in the matches array, then the condition is met
+				if ( logic == 'and' && $.inArray( false, matches ) < 0 ) {
+					met = true;
+				}
+
+				// If logic is (or) and there is at least one TRUE result in the matches array, then the condition is met
+				if ( logic == 'or' && $.inArray( true, matches ) > -1 ) {
+					met = true;
+				}
+
+
+				// Now show or hide the option based on the (met) variable
+				if ( met == true ) {
+					if ( $(this).hasClass("subitem") ) {
+						$(this).removeClass('tpl-admin-hide');
+					}
+					else {
+						$(this).closest(container).removeClass('tpl-admin-hide');
+						if ( container == 'tr' ) {
+							$(this).closest(container).next(container).has('.optiondesc').removeClass('tpl-admin-hide');
+						}
+						else {
+							$(this).closest(container).next('p.optiondesc').removeClass('tpl-admin-hide');
+						}
+					}
+				}
+				else {
+					if ( $(this).hasClass("subitem") ) {
+						$(this).addClass('tpl-admin-hide');
+					}
+					else {
+						$(this).closest(container).addClass('tpl-admin-hide');
+						if ( container == 'tr' ) {
+							$(this).closest(container).next(container).has('.optiondesc').addClass('tpl-admin-hide');
+						}
+						else {
+							$(this).closest(container).next('p.optiondesc').addClass('tpl-admin-hide');
+						}
+					}
+				}
+
+			} // Closing check for the Conditions object
+
+		});
+	}
+
+	tpl_condition_updater();
+
+	$('input, select, textarea').change(function(){
+		tpl_condition_updater();
+	});
+
+	$('input, textarea').keyup(function(){
+		tpl_condition_updater();
+	});
 
 
 });

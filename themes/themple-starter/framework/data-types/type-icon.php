@@ -35,6 +35,14 @@ class TPL_Icon extends TPL_Combined {
 				"description"	=> __( 'This is displayed when hovering the mouse over the icon when it is a link', 'themple' ),
 				"type"			=> 'text',
 				"admin_class"	=> 'tpl-dt-icon-title tpl-combi-sub-third',
+				"condition"		=> array(
+					array(
+						"type"		=> 'option',
+						"name"		=> '_THIS_/url',
+						"relation"	=> '!=',
+						"value"		=> '',
+					),
+				),
 			),
 			array(
 				"name"			=> 'size',
@@ -51,7 +59,7 @@ class TPL_Icon extends TPL_Combined {
 					"5x"			=> __( '5x', 'themple' ),
 				),
 				"key"			=> true,
-				"admin_class"	=> 'tpl-dt-icon-color tpl-combi-sub-third',
+				"admin_class"	=> 'tpl-dt-icon-color tpl-combi-sub-third clearfix',
 			),
 			array(
 				"name"			=> 'newtab',

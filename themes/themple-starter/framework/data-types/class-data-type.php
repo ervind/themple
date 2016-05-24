@@ -16,6 +16,7 @@ class TPL_Data_Type {
 	public		$repeat				= false;		// Is it a repeater / multi-instance option?
 	public		$instance			= 0;			// Used only for repeater fields
 	public		$admin_class		= '';			// Extra class added to the admin field
+	public		$description		= '';			// Initialize the option's description
 
 
 
@@ -128,24 +129,34 @@ class TPL_Data_Type {
 	// Container start of the form field
 	public function form_field_before ( $extra_class = '' ) {
 
+		// Add the data-instance attribute if it's a repeater field
 		$data_instance = '';
 
 		if ( $this->repeat == true ) {
-			$data_instance =  ' data-instance="' . $this->instance . '"';
+			$data_instance = ' data-instance="' . $this->instance . '"';
 			$extra_class .= ' repeat';
 		}
 
+		// Extra admin classes if needed
 		if ( $this->admin_class != '' ) {
 			$extra_class .= ' ' . $this->admin_class;
 		}
 
 		if ( $extra_class != '' ) {
-			$extra_class = ' ' . $extra_class;
+			$extra_class .= ' ' . $extra_class;
+		}
+
+		if ( $this->is_subitem ) {
+			$data_name = $this->parent . '/' . $this->name;
+			$extra_class .= ' subitem';
+		}
+		else {
+			$data_name = $this->name;
 		}
 
 		$class = preg_replace( '/\s+/', ' ', 'tpl-field '. $this->type . $extra_class  );
 
-		echo '<div class="' . $class . '"' . $data_instance . '>';
+		echo '<div class="' . $class . '"' . $data_instance . ' data-name="' . $data_name . '">';
 
 		if ( $this->is_subitem == true ) {
 			echo '<label for="'. $this->form_ref() .'">' . $this->title . '</label>';
@@ -474,6 +485,22 @@ class TPL_Data_Type {
 		}
 		else {
 			return;
+		}
+
+	}
+
+
+	// Return the conditions (if any) for this option
+	public function get_conditions() {
+
+		if ( isset( $this->condition ) ) {
+			return array(
+				$this->name => $this->condition
+			);
+		}
+
+		else {
+			return false;
 		}
 
 	}

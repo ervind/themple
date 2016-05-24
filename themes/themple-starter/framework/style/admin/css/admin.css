@@ -2202,6 +2202,8 @@
 }
 .meta-option .meta-option-label {
   width: 30%;
+  max-width: 200px;
+  padding-right: 20px;
   display: block;
   float: left;
   font-weight: bold;
@@ -2209,6 +2211,7 @@
 .meta-option .meta-option-wrapper {
   display: block;
   float: left;
+  width: 70%;
 }
 .meta-option .meta-option-wrapper button {
   margin-bottom: 20px;
@@ -2393,11 +2396,22 @@
   display: block;
   clear: both;
 }
+.tpl-admin-hide {
+  display: none;
+}
 /* Enter your custom LESS code for different media sizes */
+@media (max-width: 1200px) {
+  .meta-option .meta-option-wrapper {
+    width: 100%;
+  }
+}
 @media (max-width: 1040px) {
   .datatype-container.tpl-combined-wrapper .tpl-combi-sub-half,
   .datatype-container.tpl-combined-wrapper .tpl-combi-sub-third {
     width: 100%;
+  }
+  .tpl-field .tpl-field .tpl-field-inner {
+    padding-right: 0px;
   }
 }
 textarea {

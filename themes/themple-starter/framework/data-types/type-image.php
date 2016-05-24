@@ -70,7 +70,7 @@ class TPL_Image extends TPL_Data_Type {
 						<span class="hovermsg">'. __( 'Click here to remove image.', 'themple' ) .'</span>
 					</div>
 				</div>
-				<input class="img_id" type="hidden" name="' . $this->form_ref() . '" id="' . $id_name . '" value="' . $id . '" />
+				<input class="img_id" type="hidden" name="' . $this->form_ref() . '" id="' . $this->form_ref() . '" value="' . $id . '" />
 				<input class="button" type="button" name="' . $this->name . '_button" value="'. __( 'Upload', 'themple' ) .'" />';
 
 		echo '</div>';

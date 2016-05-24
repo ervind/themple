@@ -2,7 +2,7 @@
 Contributors: Arachnoidea Studio
 Requires at least: WordPress 4.3
 Tested up to: WordPress 4.5
-Version: 1.2a1
+Version: 1.2a2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: black, two-columns, right-sidebar, responsive-layout, custom-colors, custom-header, custom-menu, featured-images, threaded-comments, translation-ready

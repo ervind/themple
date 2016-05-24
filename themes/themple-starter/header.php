@@ -16,12 +16,14 @@
 		<div id="wrapper" class="wrapper">
 
 			<header>
-				<div class="row headertop">
-					<div class="logo-wrapper column-6">
-						<?php tpl_logo(); ?>
-					</div>
-					<div class="icon-line column-6">
+				<div class="row top-bar">
+					<div class="icon-line column-12">
 						<?php tpl_value( 'social_icons' ); ?>
+					</div>
+				</div>
+				<div class="row headertop">
+					<div class="logo-wrapper column-12">
+						<?php tpl_logo(); ?>
 					</div>
 				</div>
 				<div class="row column-12 menu-wrapper">
