@@ -1,13 +1,16 @@
-Themple WordPress theme framework
+# Themple WordPress theme framework  
 -- full package --
 
-This repository contains:
+## This repository contains:
 
-- Themple Starter theme with Themple Framework
+**- Themple Starter theme with Themple Framework**  
 /themes/themple-starter
 
-- Example Child theme for Themple Starter
+**- Example Child theme for Themple Starter**  
 /themes/themple-starter-child
 
-- Themple Helper plugin
+**- Themple Helper plugin**  
 /plugins/themple-helper
+
+## Documentation on this package  
+Visit http://arachnoidea.com/themple-framework/
