@@ -12,7 +12,7 @@ else {
 <div id="contentWrapper" class="row">
     <main id="content" class="blog content column-<?php echo $columns; ?>">
 
-		<?php get_template_part ( 'loop', 'blog' ); ?>
+		<?php get_template_part ( 'inc/loops/loop', 'blog' ); ?>
 
 		<aside class="pagination">
 			<?php next_posts_link( tpl_get_value ( 'olderposts' ) ); ?>

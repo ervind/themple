@@ -1,0 +1,57 @@
+// Page Builder special styles
+
+.columnset-structure {
+	display: inline-block;
+	width: 60px;
+	height: 20px;
+	vertical-align: middle;
+	margin-right: 10px;
+	border-right: 2px solid #bbb;
+
+	.select2-selection & {
+		margin-top: -2px;
+	}
+
+	.columnset-structure-part {
+		display: inline-block;
+		box-sizing: border-box;
+		vertical-align: top;
+		height: 100%;
+		border: 2px solid #bbb;
+		border-right: 0;
+		background-color: #eee;
+
+		&.csp-1_1 {
+			width: 100%;
+		}
+
+		&.csp-1_2, &.csp-2_4 {
+			width: 50%;
+		}
+
+		&.csp-1_3 {
+			width: 33.33%;
+		}
+
+		&.csp-1_4 {
+			width: 25%;
+		}
+
+		&.csp-2_3 {
+			width: 66.67%;
+		}
+
+		&.csp-3_4 {
+			width: 75%;
+		}
+	}
+
+}
+
+.tpl-dt-page_builder {
+
+	& > .tpl-field-inner {
+		padding-bottom: 0;
+	}
+
+}

@@ -21,7 +21,7 @@ else {
 		echo '<h2 class="searchterm">' . __( 'Searched for:', 'themple-starter' ) . ' <em>' . $s . '</em></h2>';
 		?>
 
-		<?php get_template_part ( 'loop', 'blog' ); ?>
+		<?php get_template_part ( 'inc/loops/loop', 'blog' ); ?>
 
     </main><!-- content -->
 

@@ -10,18 +10,18 @@ class TPL_Select extends TPL_Data_Type {
 
 
 	// Writes the form field in wp-admin
-	public function form_field_content () {
+	public function form_field_content ( $for_bank = false ) {
 
 		echo '<div class="datatype-container">';
 
 		// The saved or default value:
-		$id = $this->get_current_option();
+		$id = $this->get_option();
 
-		if ( ( $id == '' ) && ( isset( $this->default ) ) ) {
+		if ( ( $id == '' || $for_bank == true ) && ( isset( $this->default ) ) ) {
 			$id = $this->default;
 		}
 
-		echo '<select id="' . $this->form_ref() . '" name="' . $this->form_ref() . '">';
+		echo '<select id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" autocomplete="off">';
 
 		if ( $this->placeholder != '' ) {
 			echo '<option value="">' . $this->placeholder . '</option>';
@@ -47,6 +47,8 @@ class TPL_Select extends TPL_Data_Type {
 
 	// Container end of the form field
 	public function form_field_after () {
+
+		$path_i = $this->get_level() * 2 + 1;
 
 		if ( !empty( $this->default ) || !empty( $this->prefix ) || !empty( $this->suffix ) ) {
 			echo ' <div class="tpl-default-container">
@@ -74,9 +76,11 @@ class TPL_Select extends TPL_Data_Type {
 
 		echo '</div>';		// .tpl-field-inner
 
-		if ( $this->repeat == true ) {
-			echo '<div class="admin-icon remover"><span class="hovermsg">' . __( 'Remove row', 'themple' ) . '</span></div>';
-			$this->instance++;
+		if ( $this->repeat !== false ) {
+			if ( !isset( $this->repeat["number"] ) ) {
+				echo '<div class="admin-icon remover"><span class="hovermsg">' . __( 'Remove row', 'themple' ) . '</span></div>';
+			}
+			$this->path[$path_i]++;
 		}
 
 		echo '</div>';
@@ -98,39 +102,14 @@ class TPL_Select extends TPL_Data_Type {
 		if ( $key ) {
 			return $id;
 		}
+		elseif ( !isset( $values[$id] ) ) {
+			return $id;
+		}
 		else {
 			return $this->prefix . $this->values[$id] . $this->suffix;
 		}
 
 	}
 
-
-	// Returns the formatted value (with suffix and prefix)
-	public function get_value ( $args = array() ) {
-
-		// Spec branch (picks an instance of an array)
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
-
-			$id = $this->get_option( array( "i" => $args["i"] ) );
-			return $this->format_option( $id, $args );
-
-		}
-
-		// Full branch (returns the full array)
-		if ( $this->repeat == true ) {
-
-			$values = $this->get_option();
-			foreach ( $values as $i => $id ) {
-				$values[$i] = $this->format_option( $id, $args );
-			}
-			return $values;
-
-		}
-
-		// Single mode if not repeater
-		$id = $this->get_current_option();
-		return $this->format_option( $id, $args );
-
-	}
 
 }

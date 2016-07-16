@@ -191,7 +191,6 @@ $tpl_option_array = array (
         ),
         "default"		=> 'no',
         "key"           => true,
-		"repeat"		=> true,
 );
 tpl_register_option ( $tpl_option_array );
 

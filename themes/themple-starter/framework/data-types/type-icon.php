@@ -12,37 +12,19 @@ class TPL_Icon extends TPL_Combined {
 
 	public function __construct( $args ) {
 
-		$fa_icons = array();
-
 		$args["parts"] = array(
 			array(
 				"name"			=> 'code',
 				"title"			=> __( 'Icon', 'themple' ),
 				"description"	=> __( 'The Font Awesome code of the icon (uses the fa-xxx name structure)', 'themple' ),
 				"type"			=> 'font_awesome',
-				"admin_class"	=> 'tpl-dt-icon-code tpl-combi-sub-third',
 			),
 			array(
-				"name"			=> 'url',
-				"title"			=> __( 'Icon URL', 'themple' ),
-				"description"	=> __( 'Where should the icon be linked to?', 'themple' ),
-				"type"			=> 'text',
-				"admin_class"	=> 'tpl-dt-icon-url tpl-combi-sub-third',
-			),
-			array(
-				"name"			=> 'title',
-				"title"			=> __( 'Link Title', 'themple' ),
-				"description"	=> __( 'This is displayed when hovering the mouse over the icon when it is a link', 'themple' ),
-				"type"			=> 'text',
-				"admin_class"	=> 'tpl-dt-icon-title tpl-combi-sub-third',
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/url',
-						"relation"	=> '!=',
-						"value"		=> '',
-					),
-				),
+				"name"			=> 'color',
+				"title"			=> __( 'Icon Color', 'themple' ),
+				"description"	=> __( 'What should be the color of this icon?', 'themple' ),
+				"type"			=> 'color',
+				"default"		=> '#666666',
 			),
 			array(
 				"name"			=> 'size',
@@ -59,7 +41,26 @@ class TPL_Icon extends TPL_Combined {
 					"5x"			=> __( '5x', 'themple' ),
 				),
 				"key"			=> true,
-				"admin_class"	=> 'tpl-dt-icon-color tpl-combi-sub-third clearfix',
+			),
+			array(
+				"name"			=> 'url',
+				"title"			=> __( 'Icon URL', 'themple' ),
+				"description"	=> __( 'Where should the icon be linked to?', 'themple' ),
+				"type"			=> 'text',
+			),
+			array(
+				"name"			=> 'title',
+				"title"			=> __( 'Link Title', 'themple' ),
+				"description"	=> __( 'This is displayed when hovering the mouse over the icon when it is a link', 'themple' ),
+				"type"			=> 'text',
+				"condition"		=> array(
+					array(
+						"type"		=> 'option',
+						"name"		=> '_THIS_/url',
+						"relation"	=> '!=',
+						"value"		=> '',
+					),
+				),
 			),
 			array(
 				"name"			=> 'newtab',
@@ -72,15 +73,14 @@ class TPL_Icon extends TPL_Combined {
 					"yes"			=> __( 'Yes', 'themple' ),
 				),
 				"key"			=> true,
-				"admin_class"	=> 'tpl-dt-icon-color tpl-combi-sub-third',
-			),
-			array(
-				"name"			=> 'color',
-				"title"			=> __( 'Icon Color', 'themple' ),
-				"description"	=> __( 'What should be the color of this icon?', 'themple' ),
-				"type"			=> 'color',
-				"default"		=> '#666666',
-				"admin_class"	=> 'tpl-dt-icon-color tpl-combi-sub-third',
+				"condition"		=> array(
+					array(
+						"type"		=> 'option',
+						"name"		=> '_THIS_/url',
+						"relation"	=> '!=',
+						"value"		=> '',
+					),
+				),
 			),
 		);
 
@@ -100,48 +100,55 @@ class TPL_Icon extends TPL_Combined {
 	// Returns the values as an array
 	public function get_value ( $args = array() ) {
 
-		$values = array();
+		$path_n = $this->get_level() * 2;
+		$path_i = $this->get_level() * 2 + 1;
+		$path_s = $this->get_level() * 2 + 2;
 
-		// Spec branch (picks an instance of an array)
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
-
-			$result = '';
-			$values = $this->get_option( array( 'i' => $args["i"] ) );
-
-			foreach ( $this->parts as $part ) {
-				if ( $part->name == "code" ) {
-					$result = $part->format_option( $values["code"], $values );
-				}
-			}
-
-			return $result;
-
+		if ( !isset( $args["path"][$path_n] ) ) {
+			$args["path"][$path_n] = $this->name;
 		}
 
-		// Full branch (returns the full array)
-		if ( $this->repeat == true ) {
+		if ( $this->repeat === false ) {
+			$args["path"][$path_i] = 0;
+		}
 
-			$result = array();
-			$values = $this->get_option();
+		$result = array();
+
+		$values = $this->get_option( $args );
+
+		if ( !isset( $args["path"][$path_i] ) ) {
+
 			foreach ( $values as $i => $value ) {
 				foreach ( $this->parts as $part ) {
-					if ( $part->name == "code" ) {
+					if ( $part->name == "code" && isset( $value["code"] ) ) {
 						$result[$i] = $part->format_option( $value["code"], $value );
 					}
 				}
 			}
-			return $result;
 
 		}
 
-		// Single branch
-		$values = $this->get_option();
-		$result = '';
+		else {
 
-		foreach ( $this->parts as $part ) {
-			if ( $part->name == "code" ) {
-				$result = $part->format_option( $values["code"], $values );
+			if ( !isset( $args["path"][$path_s] ) ) {
+
+				foreach ( $this->parts as $part ) {
+					if ( $part->name == "code" && isset( $values["code"] ) ) {
+						$result = $part->format_option( $values["code"], $values );
+					}
+				}
+
 			}
+			else {
+
+				foreach ( $this->parts as $part ) {
+					if ( $part->name == $args["path"][$path_s] ) {
+						$result = $part->get_value( $args );
+					}
+				}
+
+			}
+
 		}
 
 		return $result;
@@ -154,40 +161,54 @@ class TPL_Icon extends TPL_Combined {
 	// Prints the value as a list
 	public function value ( $args = array() ) {
 
-		// Spec branch (picks an instance of an array)
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
+		$path_n = $this->get_level() * 2;
+		$path_i = $this->get_level() * 2 + 1;
+		$path_s = $this->get_level() * 2 + 2;
 
-			$values = $this->get_value( array( 'i' => $args["i"] ) );
+		if ( !isset( $args["path"][$path_n] ) ) {
+			$args["path"][$path_n] = $this->name;
+		}
 
-			echo $values;
+		if ( $this->repeat === false ) {
+			$args["path"][$path_i] = 0;
+		}
 
+		$values = $this->get_value( $args );
+
+		// List all
+		if ( !isset( $args["path"][$path_i] ) ) {
+
+			echo '<ul>';
+			foreach ( $values as $value ) {
+				echo '<li>' . $value . '</li>';
+			}
+			echo '</ul>';
 			return;
 
 		}
 
-		// Full branch (returns the full array)
-		if ( $this->repeat == true ) {
+		// Only one instance
+		else {
 
-			$values = $this->get_value();
+			if ( !isset( $args["path"][$path_s] ) ) {
 
-			echo '<ul>';
-
-			foreach ( $values as $value ) {
-
-				echo '<li>' . $value . '</li>';
+				echo $values;
 
 			}
 
-			echo '</ul>';
+			// Only one sub-item
+			else {
 
-			return;
+				foreach ( $this->parts as $part ) {
+					if ( $part->name == $args["path"][$path_s] ) {
+						echo $part->get_value( $args );
+					}
+				}
+
+			}
 
 		}
 
-		// Single branch
-		echo $this->get_value();
-
 	}
-
 
 }

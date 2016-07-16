@@ -15,6 +15,7 @@ tpl_loader( dirname ( __FILE__ ) . '/inc/functions-widget.php' );
 tpl_loader( dirname ( __FILE__ ) . '/inc/functions-content.php' );
 tpl_loader( dirname ( __FILE__ ) . '/inc/functions-comments.php' );
 tpl_loader( dirname ( __FILE__ ) . '/inc/functions-plugins.php' );
+tpl_loader( dirname ( __FILE__ ) . '/inc/functions-pb_apps.php' );
 
 
 // Now you can start adding your own functions below this line...

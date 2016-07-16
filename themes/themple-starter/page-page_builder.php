@@ -1,4 +1,8 @@
 <?php
+
+/* Template Name: Page Builder */
+
+
 get_header();
 $layout = tpl_get_layout();
 if ( $layout == 'full' ) {
@@ -12,7 +16,9 @@ else {
 <div id="contentWrapper" class="row">
     <main id="content" class="content column-<?php echo $columns; ?>">
 
-		<?php get_template_part ( 'inc/loops/loop' ); ?>
+		<?php get_template_part( 'inc/loops/loop', 'page_builder' ); ?>
+
+        <?php comments_template(); ?>
 
     </main><!-- content -->
 

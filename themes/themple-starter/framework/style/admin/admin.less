@@ -6,6 +6,10 @@
 	margin-bottom: 20px;
 }
 
+#tpl-settings-tabs {
+	max-width: 1200px;
+}
+
 
 // Make it a new line
 .clearfix {
@@ -31,14 +35,31 @@
 		display: block;
 		float: left;
 		width: 70%;
+	}
 
-		button {
-			margin-bottom: 20px;
-		}
+	.button-container {
+		width: ~"calc(70% + 220px)";
+	}
+
+	button {
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+
+	.tpl-combined-wrapper button {
+		margin-bottom: 0;
+	}
+
+	.datatype-container button {
+		margin-top: 0;
 	}
 
 	.tpl-field {
 		clear: both;
+
+		.button-container {
+			width: 100%;
+		}
 	}
 }
 
@@ -117,6 +138,11 @@
 }
 
 
+.button-row td {
+	padding-top: 0;
+}
+
+
 // Error message box
 .tpl-error {
 	border: 1px solid #a00;
@@ -141,8 +167,14 @@
 	position: relative;
 	display: block;
 
-	.tpl-field-inner {
-		padding-right: 20px;
+	.arranger {
+		clear: both;
+	}
+
+	&::after {
+		clear: both;
+		display: block;
+		content: '';
 	}
 }
 
@@ -155,7 +187,6 @@
 	color: #ddd;
 	position: relative;
 	cursor:pointer;
-	z-index: 2;
 	text-align: center;
 }
 
@@ -174,29 +205,36 @@
 	line-height: 1.2em;
 	text-align: left;
 	font-family: arial, sans;
+	z-index: 999;
+}
+
+.button-container {
+	text-align: right;
+	margin-top: 5px;
+	clear: both;
 }
 
 .repeat {
-	border-top: 2px solid #ddd;
-	border-bottom: 2px solid #ddd;
 	margin-bottom: 20px;
     position: relative;
-    width: 95%;
-	display: table;
+    width: 100%;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 
 	& > div {
 		display: table-cell;
 	}
 
 	.admin-icon {
-		color: #bbb;
-		width: 60px;
-		background: #ddd;
 		vertical-align: middle;
 	}
 
 	& > .tpl-field-inner {
 		padding: 20px;
+		border: 2px solid #ddd;
+		width: 100%;
 	}
 }
 
@@ -206,16 +244,6 @@
 
 	&.tpl-combined-wrapper {
 		max-width: 100%;
-
-		.tpl-combi-sub-half {
-			width: 50%;
-			float: left;
-		}
-
-		.tpl-combi-sub-third {
-			width: 33%;
-			float: left;
-		}
 	}
 
 	input:not([type=button]), select, textarea {
@@ -228,12 +256,24 @@
 }
 
 .arranger {
+	border-top: 2px solid #ddd;
+	border-bottom: 2px solid #ddd;
+	padding: 0 18px 0 20px;
+	color: #bbb;
+	background: #ddd;
+
 	&::before {
 		content: @fa-var-arrows;
 	}
 }
 
 .remover {
+	border-top: 2px solid #ddd;
+	border-bottom: 2px solid #ddd;
+	padding: 0 20px 0 18px;
+	color: #bbb;
+	background: #ddd;
+
 	&::before {
 		content: @fa-var-minus;
 	}
@@ -245,7 +285,12 @@
 	clear: both;
 }
 
-
 .tpl-admin-hide {
-	display: none;
+	display: none !important;
+}
+
+.tpl-admin-question {
+	color: #bbb;
+	margin-left: 6px;
+	font-size: 1.33333333em;
 }

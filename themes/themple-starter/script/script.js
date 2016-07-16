@@ -45,4 +45,7 @@ jQuery(document).ready(function($){
 	});
 
 
+console.log(Themple.basic_font);
+
+
 });

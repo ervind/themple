@@ -61,3 +61,16 @@
 	border-bottom: 	@size solid transparent;
 	border-right: 	@size solid @color;
 }
+
+
+
+
+
+// Clear after pseudo
+.clearafter {
+	&::after {
+		clear: both;
+		display: block;
+		content: '';
+	}
+}

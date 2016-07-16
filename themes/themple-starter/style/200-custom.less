@@ -616,7 +616,6 @@ textarea {
 }
 
 .content {
-	font-size: 16px;
 
 	p {
 		a {
@@ -826,6 +825,32 @@ textarea {
 	.form-submit {
 		margin-top: 1.8em;
 	}
+}
+
+
+.tpl-pb-wrapper{
+
+	.row {
+		padding-bottom: 20px;
+
+		.tpl-pb-column {
+			min-height: 20px;
+
+			h1, h2, h3, h4, h5, h6 {
+				margin-top: 0;
+			}
+
+			&:first-child {
+				padding-left: 0;
+			}
+
+			&:last-child {
+				padding-right: 0;
+			}
+		}
+
+	}
+
 }
 
 

@@ -67,3 +67,12 @@ $section = array (
 	"post_type"		=> 'post'
 );
 tpl_register_section ( $section );
+
+
+$section = array (
+	"name"			=> 'page_builder',
+	"title"			=> __( 'Page builder', 'themple-starter' ),
+	"description"	=> __( 'Build your page using this special option', 'themple-starter' ),
+	"post_type"		=> array( 'page' ),
+);
+tpl_register_section ( $section );

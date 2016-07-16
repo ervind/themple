@@ -12,7 +12,7 @@ else {
 <div id="contentWrapper" class="row">
     <main id="content" class="content column-<?php echo $columns; ?>">
 
-		<?php get_template_part ( 'loop', 'page' ); ?>
+		<?php get_template_part ( 'inc/loops/loop', 'page' ); ?>
 
         <?php comments_template(); ?>
 

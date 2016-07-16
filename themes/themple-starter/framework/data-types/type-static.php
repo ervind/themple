@@ -9,12 +9,9 @@ class TPL_Static extends TPL_Data_Type {
 
 
 	// Content of the form field
-	public function form_field_content () {
+	public function form_field_content ( $for_bank = false ) {
 
-		$value = $this->get_current_option();
-		if ( $value == '' ) {
-			$value = $this->default;
-		}
+		$value = $this->get_option();
 		echo $this->prefix . $value . $this->suffix;
 
 	}
@@ -24,6 +21,14 @@ class TPL_Static extends TPL_Data_Type {
 	public function form_field_after () {
 
 		echo '</div>';
+
+	}
+
+
+	// As a static option, we return here the default value
+	public function get_option ( $args = array() ) {
+
+		return $this->default;
 
 	}
 

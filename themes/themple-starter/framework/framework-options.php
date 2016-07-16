@@ -126,8 +126,26 @@ tpl_register_option ( $tpl_option_array );
 // Turn confirmation on/off when removing rows from repeater fields
 $tpl_option_array = array (
     "name"			=> 'remover_confirm',
-    "title"			=> __( 'Remover confirmation for repeater fields', 'themple' ),
+    "title"			=> __( 'Remove confirmation for repeater fields', 'themple' ),
     "description"	=> __( 'If yes, you\'ll be prompted every time you want to remove a row from a repeater field in Theme Options', 'themple' ),
+    "section"		=> 'fo_backend',
+    "type"			=> 'select',
+	"values"		=> array(
+		"yes" 		=> __( 'Yes', 'themple' ),
+		"no" 		=> __( 'No', 'themple' ),
+	),
+    "default"		=> 'yes',
+    "key"           => true,
+	"js"			=> true,
+);
+tpl_register_option ( $tpl_option_array );
+
+
+// Turn confirmation on/off when switching for columnsets with fewer columns in Page Builder
+$tpl_option_array = array (
+    "name"			=> 'pb_fewer_confirm',
+    "title"			=> __( 'Remove confirmation for Page Builder columnsets', 'themple' ),
+    "description"	=> __( 'If yes, you\'ll be prompted every time you want to switch to a columnset with fewer columns in Page Builder', 'themple' ),
     "section"		=> 'fo_backend',
     "type"			=> 'select',
 	"values"		=> array(

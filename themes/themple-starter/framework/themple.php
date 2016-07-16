@@ -7,7 +7,7 @@ For more information and documentation, visit [http://www.arachnoidea.com/thempl
 
 
 // Version number of the framework
-define( 'THEMPLE_VERSION', '1.2a2' );
+define( 'THEMPLE_VERSION', '1.2a3' );
 
 
 
@@ -21,9 +21,9 @@ add_action( 'after_setup_theme', function() {
 });
 
 // Load data type components
-add_action ( 'after_setup_theme', 'tpl_load_data_types' );
+add_action ( 'init', 'tpl_load_data_types' );
 // Load ALL options
-add_action ( 'after_setup_theme', 'tpl_load_all_options' );
+add_action ( 'init', 'tpl_load_all_options' );
 
 // Initial actions (menus, admin pages)
 add_action ( 'admin_menu', 'tpl_admin_init' );
@@ -60,6 +60,9 @@ remove_action( 'wp_head', 'wp_generator' );
 add_filter( 'style_loader_src', 'tpl_remove_cssjs_ver', 10, 2 );
 add_filter( 'script_loader_src', 'tpl_remove_cssjs_ver', 10, 2 );
 
+// Adds the repeater field bank in the footer
+add_action('admin_footer', 'tpl_repeater_bank');
+
 // The options array that stores all the options to be displayed in Theme Options
 $tpl_options_array = array();
 
@@ -71,6 +74,10 @@ $tpl_data_types = array();
 
 // Registered less files
 $tpl_less_files = array();
+
+// Registered Page Builder apps
+$tpl_pb_apps = array();
+
 
 
 
@@ -102,6 +109,7 @@ function tpl_make_css () {
 
 	// Is LESS compiler turned ON in Framework Options?
 	$less_compiler = tpl_get_value( 'less_compiler' );
+
 	// If it has the Dynamic setting and the Theme Options have just been modified, turn ON the compiler
 	if ( current_filter() == 'update_option_tpl_theme_options' && tpl_get_value( 'less_compiler' ) == 'dynamic' ) {
 		$less_compiler = 'on';
@@ -300,18 +308,26 @@ function tpl_load_data_types () {
 
 	global $tpl_data_types, $tpl_less_files;
 
-	require_once ABSPATH . "wp-admin/includes/file.php";
-	WP_Filesystem();
-	global $wp_filesystem;
+	// Defining the file names and the order they are loaded - important as Data Types can be dependent on other Data Types
+	$files = array(
+		"class-data_type",
+		"type-static",
+		"type-text",
+		"type-textarea",
+		"type-color",
+		"type-image",
+		"type-number",
+		"type-select",
+		"type-font_awesome",
+		"type-combined",
+		"type-icon",
+		"type-page_builder",
+	);
 
-	$dt_json_file = dirname ( __FILE__ ) . '/data-types/data-types.json';
-	$dt_json = json_decode( $wp_filesystem->get_contents( $dt_json_file ), true );
-	$files = $dt_json["dt_files"];
-
-	// $files = glob ( dirname ( __FILE__ ) . '/data-types/*.php' );
+	// Now run the load loop for Data Types
 	foreach ( $files as $file ) {
 
-		tpl_loader ( dirname ( __FILE__ ) . '/data-types/' . $file . ".php" );
+		tpl_loader ( dirname ( __FILE__ ) . '/data-types/' . $file . '.php' );
 		$curtype = explode ( '-', $file );
 		$tpl_data_types[] = $curtype[1];
 
@@ -320,6 +336,13 @@ function tpl_load_data_types () {
 		}
 
 	}
+
+	// And load the Page Builder apps, too
+	$files = glob ( dirname ( __FILE__ ) . '/data-types/pb-apps/*.php' );
+	foreach ( $files as $file ) {
+		tpl_loader ( $file );
+	}
+
 
 }
 
@@ -422,6 +445,28 @@ function tpl_register_section ( $narr ) {
 	}
 
 	$tpl_sections[$narr_name] = $narr;
+
+}
+
+
+
+// Register a Page builder App
+function tpl_register_pb_app ( $narr ) {
+
+	global $tpl_pb_apps;
+
+	$pos = $narr["pos"];
+	$inserted = false;
+
+	while ( $inserted == false ) {
+		if ( !isset( $tpl_pb_apps[$pos] ) ) {
+			$tpl_pb_apps[$pos] = $narr;
+			$inserted = true;
+		}
+		$pos++;
+	}
+
+	ksort( $tpl_pb_apps );
 
 }
 
@@ -780,8 +825,8 @@ function tpl_theme_options_callback ( $args ) {
 
 		$tpl_options_array[$name]->form_field();
 
-		if ( $tpl_options_array[$name]->repeat == true ) {
-			echo '<button class="repeat-add">' . __( 'Add row', 'themple' ) . '</button>';
+		if ( $tpl_options_array[$name]->repeat !== false && !isset( $tpl_options_array[$name]->repeat["number"] ) ) {
+			echo '</td></tr><tr class="button-row"><td></td><td><div class="button-container"><button class="repeat-add" data-for="' . $tpl_options_array[$name]->data_name . '">' . $tpl_options_array[$name]->repeat_button_title . '</button></div>';
 		}
 
 		if ( !isset( $args["description"] ) ) {
@@ -795,12 +840,46 @@ function tpl_theme_options_callback ( $args ) {
 
 
 
+// Gets the unformatted value from wpdb
+function tpl_get_option ( $name ) {
+
+	global $tpl_options_array;
+
+	if ( is_array( $name ) ) {
+		$path = explode( '/', $name["name"] );
+		$name["name"] = $path[0];
+		$name["path"] = $path;
+		if ( isset ( $tpl_options_array[$name["name"]]->type ) ) {
+			return $tpl_options_array[$name["name"]]->get_option( $name );
+		}
+		else {
+			return '';
+		}
+	}
+
+	else {
+		$path = explode( '/', $name );
+		$name = $path[0];
+		if ( isset ( $tpl_options_array[$name]->type ) ) {
+			return $tpl_options_array[$name]->get_option( array( 'path' => $path ) );
+		}
+		else {
+			return '';
+		}
+	}
+
+}
+
+
 // Gets the formatted value of an option
 function tpl_get_value ( $name ) {
 
     global $tpl_options_array;
 
 	if ( is_array( $name ) ) {
+		$path = explode( '/', $name["name"] );
+		$name["name"] = $path[0];
+		$name["path"] = $path;
 		if ( isset ( $tpl_options_array[$name["name"]]->type ) ) {
 			return $tpl_options_array[$name["name"]]->get_value( $name );
 		}
@@ -810,8 +889,10 @@ function tpl_get_value ( $name ) {
 	}
 
 	else {
+		$path = explode( '/', $name );
+		$name = $path[0];
 		if ( isset ( $tpl_options_array[$name]->type ) ) {
-			return $tpl_options_array[$name]->get_value();
+			return $tpl_options_array[$name]->get_value( array( 'path' => $path ) );
 		}
 		else {
 			return '';
@@ -827,6 +908,9 @@ function tpl_value ( $name ) {
     global $tpl_options_array;
 
 	if ( is_array( $name ) ) {
+		$path = explode( '/', $name["name"] );
+		$name["name"] = $path[0];
+		$name["path"] = $path;
 		if ( isset ( $tpl_options_array[$name["name"]]->type ) ) {
 			return $tpl_options_array[$name["name"]]->value( $name );
 		}
@@ -836,34 +920,10 @@ function tpl_value ( $name ) {
 	}
 
 	else {
+		$path = explode( '/', $name );
+		$name = $path[0];
 		if ( isset ( $tpl_options_array[$name]->type ) ) {
-			return $tpl_options_array[$name]->value();
-		}
-		else {
-			return '';
-		}
-	}
-
-}
-
-
-// Gets the unformatted value from wpdb
-function tpl_get_option ( $name ) {
-
-	global $tpl_options_array;
-
-	if ( is_array( $name ) ) {
-		if ( isset ( $tpl_options_array[$name["name"]]->type ) ) {
-			return $tpl_options_array[$name["name"]]->get_option( $name );
-		}
-		else {
-			return '';
-		}
-	}
-
-	else {
-		if ( isset ( $tpl_options_array[$name]->type ) ) {
-			return $tpl_options_array[$name]->get_option();
+			return $tpl_options_array[$name]->value( array( 'path' => $path ) );
 		}
 		else {
 			return '';
@@ -878,17 +938,28 @@ function tpl_get_option_object ( $name ) {
 
 	global $tpl_options_array;
 
-	if ( !isset ( $tpl_options_array[$name] ) ) {
-
-		return false;
-
+	if ( is_array( $name ) ) {
+		$path = explode( '/', $name["name"] );
+		$name["name"] = $path[0];
+		$name["path"] = $path;
+		if ( isset ( $tpl_options_array[$name["name"]]->type ) ) {
+			return $tpl_options_array[$name["name"]]->get_object( $name );
+		}
+		else {
+			return '';
+		}
 	}
 
-    else {
-
-		return $tpl_options_array[$name]->get_object();
-
-    }
+	else {
+		$path = explode( '/', $name );
+		$name = $path[0];
+		if ( isset( $tpl_options_array[$name] ) && isset ( $tpl_options_array[$name]->type ) ) {
+			return $tpl_options_array[$name]->get_object( array( 'path' => $path ) );
+		}
+		else {
+			return '';
+		}
+	}
 
 }
 
@@ -1092,7 +1163,12 @@ function tpl_inner_custom_box ( $post, $metabox ) {
 			$values[0][$option->name] = "";
 		}
 
-		echo '<div class="clearfix meta-option">';
+		$data_connected = '';
+		if ( $option->condition_connected != '' ) {
+			$data_connected = ' data-connected="' . $option->condition_connected . '"';
+		}
+
+		echo '<div class="clearfix meta-option"' . $data_connected . '>';
 
 		echo '<span class="meta-option-label">' . $option->title . '</span>';
 
@@ -1115,10 +1191,10 @@ function tpl_inner_custom_box ( $post, $metabox ) {
 
 			echo '<div class="meta-option-wrapper">';
 				$option->form_field();
-				if ( $option->repeat == true ) {
-					echo '<button class="repeat-add">' . __( 'Add row', 'themple' ) . '</button>';
-				}
 			echo '</div>';
+			if ( $option->repeat !== false && !isset( $option->repeat["number"] ) ) {
+				echo '<div class="button-container"><button class="repeat-add" data-for="' . $option->data_name . '">' . $option->repeat_button_title . '</button></div>';
+			}
 
 		}
 
@@ -1200,6 +1276,28 @@ function tpl_theme_options_message() {
 }
 
 
+// Build up a bank of repeater fields in the footer
+function tpl_repeater_bank() {
+
+	global $tpl_options_array;
+
+	$screen = get_current_screen();
+	$post_type = str_replace( 'appearance_page_tpl_', '', $screen->id );
+
+	echo '<div id="repeater_bank" class="tpl-admin-hide">';
+
+	foreach ( $tpl_options_array as $option ) {
+
+		if ( tpl_has_section_post_type ( $option->section, $post_type ) ) {
+			$option->form_field( true );
+		}
+
+	}
+
+	echo '</div>';
+
+}
+
 
 
 /*
@@ -1251,6 +1349,7 @@ function tpl_admin_scripts() {
 		'uploader_title'		=> __( 'Choose Image', 'themple' ),
 		'uploader_button'		=> __( 'Choose Image', 'themple' ),
 		'remover_confirm_text'	=> __( 'Do you really want to remove this instance?', 'themple' ),
+		'pb_fewer_instances'	=> __( 'The columnset you have just selected contains fewer columns than the previous setting. It means that the last ##N## column(s) will be removed with all their contents. Do you want to proceed?', 'themple' ),
 	), tpl_admin_vars_to_js() ) );
 
 	tpl_admin_vars_to_js();
@@ -1311,7 +1410,9 @@ function tpl_admin_vars_to_js() {
 			if ( tpl_has_section_post_type ( $option->section, $post_type ) ) {
 
 				foreach ( $option->get_conditions() as $key => $value ) {
+
 					$to_js["Conditions"][$key] = $value;
+
 				}
 
 			}

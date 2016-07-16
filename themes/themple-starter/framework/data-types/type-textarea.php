@@ -11,12 +11,19 @@ class TPL_Textarea extends TPL_Data_Type {
 
 
 	// Writes the form field in wp-admin
-	public function form_field_content () {
+	public function form_field_content ( $for_bank = false ) {
+
+		if ( $for_bank == true ) {
+			$value = $this->default;
+		}
+		else {
+			$value = esc_textarea( $this->get_option() );
+		}
 
 		echo '<div class="tpl-textarea-wrapper datatype-container">';
 
 		echo '<textarea id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" rows="' . $this->size . '">'
-		. esc_textarea( $this->get_current_option() )
+		. $value
 		. '</textarea>';
 
 		echo '</div>';
@@ -35,20 +42,18 @@ class TPL_Textarea extends TPL_Data_Type {
 	// Echoes the value of the option
 	public function value ( $args = array() ) {
 
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
-			echo '<p>' . $this->get_value( $args ) . '</p>';
-			return;
-		}
-
-		if ( $this->repeat == true ) {
+		if ( $this->repeat !== false ) {
 
 			$values = $this->get_value( $args );
-			echo '<ul>';
-			foreach ( $values as $value ) {
-				echo '<li>' . $value . '</li>';
+
+			if ( is_array( $values ) ) {
+				echo '<ul>';
+				foreach ( $values as $value ) {
+					echo '<li>' . $value . '</li>';
+				}
+				echo '</ul>';
+				return;
 			}
-			echo '</ul>';
-			return;
 
 		}
 

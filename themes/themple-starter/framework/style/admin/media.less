@@ -2,17 +2,38 @@
 
 @media (max-width: 1280px) {
 
+	.meta-option {
+		.meta-option-wrapper, .button-container {
+			width: 100%;
+		}
+
+		button {
+			margin-top: 12px;
+			margin-bottom: 12px;
+		}
+	}
+
+	.repeat {
+		margin-bottom: 12px;
+
+		& > .tpl-field-inner {
+			padding: 12px;
+		}
+	}
+
+	.arranger {
+		padding: 0 10px 0 12px;
+	}
+
+	.remover {
+		padding: 0 12px 0 10px;
+	}
+
 }
 
 
 
 @media (max-width: 1200px) {
-
-	.meta-option {
-		.meta-option-wrapper {
-			width: 100%;
-		}
-	}
 
 }
 
@@ -20,15 +41,7 @@
 
 @media (max-width: 1040px) {
 
-	.datatype-container {
-		&.tpl-combined-wrapper {
-			.tpl-combi-sub-half, .tpl-combi-sub-third {
-				width: 100%;
-			}
-		}
-	}
-
-	.tpl-field .tpl-field .tpl-field-inner {
+	.tpl-field:not(.repeat) > .tpl-field-inner {
 		padding-right: 0px;
 	}
 

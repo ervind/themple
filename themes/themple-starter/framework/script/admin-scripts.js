@@ -17,6 +17,7 @@ TABLE OF CONTENTS
 	4.1 Tabs in the backend
 	4.2 Hover messages on icons
 5. Conditional settings
+6. Page Builder settings
 
 */
 
@@ -34,26 +35,35 @@ TABLE OF CONTENTS
     var custom_uploader;
 
 	// Needed for the Select data type
-	var select2_settings = {
+	// Basic settings for all types of dropdowns
+	var basic_select2_settings = {
 		escapeMarkup: function(m) {
 			return m;
 		},
 		width: "100%",
-		minimumResultsForSearch: 10,
 	}
 
+	// General settings for simple select dropdowns
+	var select2_settings = $.extend( {
+		minimumResultsForSearch: 10,
+	}, basic_select2_settings );
+
+	// Font Awesome dropdown settings
 	var fa_icon_settings = $.extend( {
 		templateSelection: tpl_fa_icon_template,
 		templateResult: tpl_fa_icon_template,
-	}, select2_settings );
+		minimumResultsForSearch: 10,
+	}, basic_select2_settings );
 
-	// Decide which container to use based on  where we are: on Post editor or on Theme Options page
-	if ( $('body').hasClass('post-new-php') || $('body').hasClass('post-php') ) {
-		var repeat_container = '.meta-option-wrapper';
-	}
-	else {
-		var repeat_container = 'td';
-	}
+	// Page Builder columnset dropdown settings
+	var pb_columnset_settings = $.extend( {
+		templateSelection: tpl_pb_columnset_template,
+		templateResult: tpl_pb_columnset_template,
+		minimumResultsForSearch: Infinity,
+	}, basic_select2_settings );
+
+	// Do an initial row arrangement, just in case...
+	tpl_arrange_rows();
 
 
 
@@ -132,7 +142,7 @@ TABLE OF CONTENTS
 	}
 
 	// Color picker script
-    $('.tpl-color-field').each(function(){
+    $('#wpcontent .tpl-color-field').each(function(){
 		$(this).wpColorPicker( color_picker_settings );
 	});
 
@@ -148,11 +158,24 @@ TABLE OF CONTENTS
 */
 
 	// Select scripts
-	$('.tpl-field.select').not('.font_awesome').find('select').select2( select2_settings );
-	$('.tpl-field.select.font_awesome select').select2( fa_icon_settings );
+	$('#wpcontent .tpl-field.select').not('.font_awesome').find('select').select2( select2_settings );
+	$('#wpcontent .tpl-field.select.font_awesome select').select2( fa_icon_settings );
+	$('#wpcontent .tpl-field.select.tpl-columnset select').select2( pb_columnset_settings );
 
 	function tpl_fa_icon_template(data, container) {
 		return '<i class="fa fa-' + data.id + '"></i> ' + data.text;
+	}
+
+	function tpl_pb_columnset_template(data, container) {
+		var structure = '<span class="columnset-structure">';
+		if ( data.id != undefined ) {
+			var columnset = data.id.split('-');
+			for ( var i = 0; i < columnset.length; i++ ) {
+				structure += '<span class="columnset-structure-part csp-'+ columnset[i].replace('/','_') +'"></span>';
+			}
+		}
+		structure += '</span>';
+		return structure + data.text;
 	}
 
 
@@ -165,89 +188,73 @@ TABLE OF CONTENTS
 
 */
 
-	// Add rows to repeater
-	$('button.repeat-add').click(function(e){
+	function tpl_repeat_set_container( elem ){
 
-		e.preventDefault();
-		var container = $(this).closest(repeat_container);
-		var donor = container.find('.repeat').first().clone();
-		$(this).before(donor);
-		var just_added = container.find('.repeat').last();
+		var url = window.location.href;
 
-		// Special modifications for image fields
-		if ( container.find('.repeat').first().hasClass('image') ) {
-			$('.uploaded-image', just_added).attr('src', '');
-			$('.uploaded-image', just_added).hide();
-			$('.closer', just_added).hide();
-			$('.placeholder', just_added).show();
-			$('.img_id', just_added).val('').trigger('change');
-		}
-		else {
-			container.find('.repeat').last().find('input[type=text]').val('');
-			container.find('.repeat').last().find('input[type=number]').val('');
-			container.find('.repeat').last().find('textarea').html('');
-		}
-
-		// Special modifications for color fields
-		if ( container.find('.repeat').first().hasClass('color') ) {
-			var orig_input = container.find('.tpl-field').first().find('.tpl-color-field').get(0).outerHTML;
-			$('.wp-picker-container', just_added).remove();
-			$('.datatype-container', just_added).html(orig_input);
-			$('.tpl-color-field', just_added).show();
-			$('.tpl-color-field', just_added).wpColorPicker( color_picker_settings );
-		}
-
-		// Special modifications for Select fields
-		if ( container.find('.repeat').first().hasClass('select') ) {
-			just_added.find('.select2-container').remove();
-			if ( $(just_added).hasClass('font_awesome') ) {
-				$('select', just_added).select2( fa_icon_settings );
+		// Primary Options page (Theme Options, Framework Options)
+		if ( url.indexOf('themes.php') > -1 ) {
+			if ( elem.parent().prev().hasClass('subitem-repeat-wrapper') ) {
+				var container = elem.parent().prev('.subitem-repeat-wrapper');
 			}
 			else {
-				$('select', just_added).select2( select2_settings );
+				var container = elem.closest('tr').prev().children('.repeater');
+			}
+		}
+		// Post options branch
+		if ( url.indexOf('post.php') > -1 ) {
+			if ( elem.parent().prev().hasClass('subitem-repeat-wrapper') ) {
+				var container = elem.parent().prev('.subitem-repeat-wrapper');
+			}
+			else {
+				var container = elem.parent().prev('.meta-option-wrapper');
 			}
 		}
 
-		// Special modifications for combined DT
-		if ( container.find('.repeat').first().hasClass('combined') ) {
+		return container;
 
-			just_added.find('.image').each(function(){
-				$('.uploaded-image', this).attr('src', '');
-				$('.uploaded-image', this).hide();
-				$('.closer', this).hide();
-				$('.placeholder', this).show();
-				$('.img_id', this).val('').trigger('change');
-			});
+	}
 
-			just_added.find('.color').each(function(){
-				var orig_input = $('label', this).get(0).outerHTML + '<br>' + $('.tpl-color-field', this).get(0).outerHTML + $('.tpl-default-container', this).get(0).outerHTML;
-				$('.wp-picker-container', this).remove();
-				$(this).html(orig_input);
-				$('.tpl-color-field', this).show();
-				$('.tpl-color-field', this).val( $('.tpl-color-field', this).attr('data-default-color') );
-				$('.tpl-color-field', this).wpColorPicker( color_picker_settings );
-			});
 
-			// Special modifications for Select fields
-			just_added.find('.select').each(function(){
-				$('.select2-container', this).remove();
-				if ( $(this).hasClass('font_awesome') ) {
-					$('select', this).select2( fa_icon_settings );
-				}
-				else {
-					$('select', this).select2( select2_settings );
-				}
-			});
 
-		}
+	// Add rows to repeater
+	$('body').on('click', 'button.repeat-add', function(e){
+		e.preventDefault();
+		var container = tpl_repeat_set_container( $(this) );
+		tpl_add_row( container, $(this).attr('data-for') );
+	});
+
+	function tpl_add_row( container, data_name ) {
+
+		var donor = $("#repeater_bank .tpl-field[data-name='" + data_name + "']").clone();
+		container.append(donor);
+		var just_added = container.find('.repeat').last();
+
+		// Launch color picker
+		$('#wpcontent .tpl-color-field').wpColorPicker( color_picker_settings );
+
+		// Launch Select2 on select fields
+		$('#wpcontent .tpl-field.select').not('.font_awesome').find('select').select2( select2_settings );
+		$('#wpcontent .tpl-field.select.font_awesome select').select2( fa_icon_settings );
+		$('#wpcontent .tpl-field.select.tpl-columnset select').select2( pb_columnset_settings );
 
 		tpl_repeater_refresh(container);
 
-	});
+		tpl_arrange_rows();
+
+		tpl_condition_updater();
+
+	}
 
 
 	// Remove rows from repeater
 	$('body').on('click', '.remover', function(){
+		tpl_remove_row( $(this) );
+	});
+
+	function tpl_remove_row( elem ) {
+
+		var container = $(elem).closest('.repeater');
 
 		if ( Themple_Admin.remover_confirm == 'yes' ) {
 			var remove = confirm( Themple_Admin.remover_confirm_text );
@@ -257,59 +264,119 @@ TABLE OF CONTENTS
 		}
 
 		if ( remove == true ) {
-			var container = $(this).closest(repeat_container);
-			var i = container.find('.tpl-field').length;
-			if ( i > 1 ) {
-				$(this).closest('.tpl-field').remove();
-			}
-			else {
-				container.find('.tpl-field input').val('');
-			}
-			tpl_repeater_refresh(container);
+			$(elem).closest('.tpl-field').remove();
+			container.each(function(){
+				tpl_repeater_refresh($(elem));
+			});
 		}
 
-	});
+	};
 
 
 	// Arrange rows
-	$('.repeat').closest(repeat_container).addClass('repeater');
-	$('.repeater').sortable({
-		handle : '.arranger',
-		update : function( event, ui ) {
-			tpl_repeater_refresh( $(this) );
-		},
-		start : function( event, ui ){
-        	ui.placeholder.height( ui.item.height() );
-    	}
-	});
+	function tpl_arrange_rows(){
+		$('.repeat').each(function(){
+			$(this).parent().addClass('repeater');
+		});
+		$('.repeater').sortable({
+			handle : '.arranger',
+			update : function( event, ui ) {
+				tpl_repeater_refresh( $(this) );
+			},
+			start : function( event, ui ){
+				ui.placeholder.height( ui.item.height() );
+			}
+		});
+	}
 
 
 	// Update order numbers after repeater item added, removed or rearranged
 	function tpl_repeater_refresh(container){
 
-		var i = 0;
-		container.find('.repeat').each(function(){
-			$(this).attr('data-instance', i);
+		var url = window.location.href;
+		var i = [];
+		i[0] = 0;
+		var name = '';
+
+		container.find('.tpl-field').each(function(){
+
+			// Setting up levels + instances for the current field
+			var level = parseInt($(this).attr('data-level'));
+			var name_array = $(this).attr('data-name').split('/');
+
+			if ( level > 0 ) {
+
+				for (var k=0; k<level; k++) {
+					var data_name = '';
+
+					for (var l=0; l<=k; l++) {
+						data_name += name_array[l];
+						if ( l < k ) {
+							data_name += '/';
+						}
+					}
+
+					i[k] = parseInt( $(this).parents('.tpl-field[data-name="'+ data_name +'"]').last().attr('data-instance') );
+				}
+
+			}
+
+			// If a new sort of item is found
+			var inum = parseInt( $(this).prev('.tpl-field[data-name="'+ $(this).attr('data-name') +'"]').attr('data-instance') );
+
+			if ( isNumeric(inum) ) {
+				i[level] = inum + 1;
+			}
+			else {
+				i[level] = 0;
+			}
+
+			$(this).attr('data-instance', i[level]);
+			if ( level == 0 ) {
+				for (var j=1; j<i.length; j++) {
+					i[j] = 0;
+				}
+			}
+
 			$('input, select, textarea', this).each(function(){
 				var oldname = $(this).attr('name');
 				if ( typeof(oldname) !== 'undefined' ) {
-					var newname = oldname.replace(/\[[0-9]+\]/, '['+i+']');
+					var oldname_array = oldname.split('[');
+					var newname = oldname_array[0];
+					for (var j=0; j<name_array.length; j++) {
+						if ( j < name_array.length - 1 ) {
+							if ( url.indexOf('post.php') > -1 && j == 0 ) {
+								newname += '[' + i[j] + ']';
+							}
+							else {
+								newname += '[' + name_array[j] + '][' + i[j] + ']';
+							}
+						}
+						else {
+							if ( $(this).closest('.tpl-field').hasClass('repeat') ) {
+								newname += '[' + name_array[j] + '][' + i[j] + ']';
+							}
+							else {
+								newname += '[' + name_array[j] + ']';
+							}
+						}
+					}
+
 					$(this).attr('name', newname);
 					$(this).attr('id', newname);
-					$(this).closest('.repeat').find('label').each(function(){
-						if ( $(this).attr('for') == oldname ) {
-							$(this).attr('for', newname);
-						}
+					$(this).closest('.tpl-field').prev('label').each(function(){
+						$(this).attr('for', newname);
 					});
 				}
 			});
+
 			if ( container.find('.repeat').first().hasClass('image') ) {
 				var base_name = $('.button', this).attr('name');
 				base_name = base_name.replace('_button', '');
-				var ins_name = base_name + '_' + i;
+				var ins_name = base_name + '_' + i[level];
 				$('.img_id', this).attr('id', ins_name);
 			}
-			i++;
+
 		});
 
 	}
@@ -361,13 +428,13 @@ TABLE OF CONTENTS
 */
 
 	// Hover messages for icons
-	$('body').on('mouseover', '.closer, .remover, .arranger', function(){
+	$('body').on('mouseover', '.admin-icon', function(){
 
 		$('.hovermsg',this).show();
 
 	});
 
-	$('body').on('mouseout', '.closer, .remover, .arranger', function(){
+	$('body').on('mouseout', '.admin-icon', function(){
 
 		$('.hovermsg',this).hide();
 
@@ -423,29 +490,41 @@ TABLE OF CONTENTS
 	// Updates the state of the conditional options. Use it after every change in the conditions.
 	function tpl_condition_updater() {
 		var url = window.location.href;
-		// Primary Options page (Theme Options, Framework Options)
-		if ( url.indexOf('themes.php') > -1 ) {
-			var section = tpl_get_url_param('page', url);
-			var container = 'tr';
-		}
-		// Post options branch
-		if ( url.indexOf('post.php') > -1 ) {
-			var section = '';
-			var container = '.meta-option';
-		}
 
-		$('.tpl-field').each(function(){
+		$('#wpcontent .tpl-field, #wpcontent .subitem-repeat-wrapper, #wpcontent .meta-option').each(function(){
+
+			// Primary Options page (Theme Options, Framework Options)
+			if ( url.indexOf('themes.php') > -1 ) {
+				var section = tpl_get_url_param('page', url);
+				var container = 'tr';
+			}
+			// Post options branch
+			if ( url.indexOf('post.php') > -1 ) {
+				var section = '';
+				var container = '.meta-option';
+			}
 
 			var option_name = $(this).attr('data-name');
+			var data_connected = $(this).attr('data-connected');
+
+			if ( $(this).hasClass('subitem-repeat-wrapper') || $(this).hasClass('meta-option') ) {
+				option_name = data_connected;
+			}
+
+			// Section is different when we're dealing with a post option
+			if ( section == '' ) {
+				section = $(this).closest('.postbox').attr('id');
+			}
+
 
 			// Do things only if the condition is registered in the Conditions object
-			if ( Themple_Admin.Conditions[option_name] !== undefined ) {
+			if ( Themple_Admin.Conditions !== undefined && Themple_Admin.Conditions[option_name] !== undefined ) {
 
 				var Olength = Object.keys(Themple_Admin.Conditions[option_name]).length;
 				var ci;
 				var matches = [];
 
-				for ( ci = 0; ci < Olength; ++ci ) {
+				for ( ci = 0; ci < Olength; ci++ ) {
 
 
 					if ( typeof( Themple_Admin.Conditions[option_name][ci] ) !== 'undefined' ) {
@@ -457,6 +536,8 @@ TABLE OF CONTENTS
 						var base_id = '';
 						var base_val = '';
 						var cname_array = [];
+						var c_array = [];
+						var dname_array = [];
 
 
 						// If the condition is an option
@@ -466,42 +547,58 @@ TABLE OF CONTENTS
 							if ( condition_name.indexOf( '/' ) > -1 ) {
 
 								cname_array = condition_name.split("/");
+								dname_array = option_name.split("/");
 
-								// Add 0 as the instance number if there's no instance number defined
-								if ( !isNumeric( cname_array[1] ) ) {
-									cname_array.splice( 1, 0, 0 );
-								}
-
+								// If the base of the condition is a sibling field of the current one
 								if ( cname_array[0] == "_THIS_" ) {
-									cname_array[0] = $(this).parent().closest('.tpl-field').attr('data-name');
-									cname_array[1] = $(this).parent().closest('.tpl-field').attr('data-instance');
+
+									for ( var j = 0; j < dname_array.length - 1; j++ ) {
+										c_array[2*j] = dname_array[j];
+
+										var current_data_name = '';
+										for ( var k = 0; k <= j; k++ ) {
+											current_data_name += dname_array[k];
+											if ( k < j ) {
+												current_data_name += '/';
+											}
+										}
+
+										c_array[2*j+1] = $(this).closest('.tpl-field[data-name="'+ current_data_name +'"]').attr('data-instance');
+									}
+
+									c_array.push( cname_array[cname_array.length-1] );
+
+								}
+
+								// If the base of the condition is an absolute path
+								else {
+
+									c_array = cname_array;
+
 								}
 
 							}
 
+							// Condition is a single variable
 							else {
 
-								cname_array[0] = condition_name;
-								cname_array[1] = 0;
+								c_array[0] = condition_name;
+								c_array[1] = 0;
 
 							}
 
-
-							// Primary section branch for getting the base values
-							// base_id: ID of the element that's the base of the condition
-							if ( section != '' ) {
-								base_id = '#' + section + '\\[' + cname_array[0] + '\\]\\[' + cname_array[1] + '\\]';
-								if ( cname_array[2] !== undefined ) {
-									base_id += '\\[' + cname_array[2] + '\\]';
+							base_id = '#' + section;
+							if ( url.indexOf('post.php') > -1 ) {
+								base_id += '_' + c_array[0];
+							}
+							for ( var l = 0; l < c_array.length; l++ ) {
+								if ( url.indexOf('post.php') > -1 ) {
+									if ( l > 0 ) {
+										base_id += '\\[' + c_array[l] + '\\]';
+									}
 								}
-							}
-							// We're now at the point where we can set up the section for the post option
-							// After that we get the value of the base element
-							else {
-								section = $(this).closest('.postbox').attr('id');
-								base_id = '#' + section + '_' + cname_array[0] + '\\[' + cname_array[1] + '\\]';
-								if ( cname_array[2] !== undefined ) {
-									base_id += '\\[' + cname_array[2] + '\\]';
+								else {
+									base_id += '\\[' + c_array[l] + '\\]';
 								}
 							}
 
@@ -645,61 +742,144 @@ TABLE OF CONTENTS
 					var logic = Themple_Admin.Conditions[option_name]["logic"];
 				}
 
-				// If logic is (and) and there is no FALSE result in the matches array, then the condition is met
+				// If logic is (AND) and there is no FALSE result in the matches array, then the condition is met
 				if ( logic == 'and' && $.inArray( false, matches ) < 0 ) {
 					met = true;
 				}
 
-				// If logic is (or) and there is at least one TRUE result in the matches array, then the condition is met
+				// If logic is (OR) and there is at least one TRUE result in the matches array, then the condition is met
 				if ( logic == 'or' && $.inArray( true, matches ) > -1 ) {
 					met = true;
 				}
 
 
 				// Now show or hide the option based on the (met) variable
+				data_connected = data_connected.replace('/', '\/');
+				$(this).closest(container).attr('data-connected', data_connected);
+
 				if ( met == true ) {
-					if ( $(this).hasClass("subitem") ) {
-						$(this).removeClass('tpl-admin-hide');
-					}
-					else {
-						$(this).closest(container).removeClass('tpl-admin-hide');
+
+					if ( typeof( data_connected ) !== "undefined" ) {
+						$(this).parent().parent().parent().find('[data-connected="'+ data_connected +'"]').removeClass('tpl-admin-hide');
 						if ( container == 'tr' ) {
 							$(this).closest(container).next(container).has('.optiondesc').removeClass('tpl-admin-hide');
 						}
 						else {
 							$(this).closest(container).next('p.optiondesc').removeClass('tpl-admin-hide');
 						}
+						$(this).find('input, select, textarea').each(function(){
+							$(this).attr('name', $(this).attr('id'));
+						});
 					}
+
 				}
 				else {
-					if ( $(this).hasClass("subitem") ) {
-						$(this).addClass('tpl-admin-hide');
-					}
-					else {
-						$(this).closest(container).addClass('tpl-admin-hide');
+
+					if ( typeof( data_connected ) !== "undefined" ) {
+						$(this).parent().parent().parent().find('[data-connected="'+ data_connected +'"]').addClass('tpl-admin-hide');
 						if ( container == 'tr' ) {
 							$(this).closest(container).next(container).has('.optiondesc').addClass('tpl-admin-hide');
 						}
 						else {
 							$(this).closest(container).next('p.optiondesc').addClass('tpl-admin-hide');
 						}
+						$(this).find('input, select, textarea').removeAttr('name');
 					}
+
 				}
 
 			} // Closing check for the Conditions object
 
 		});
+
+		$('.postbox').each(function(){
+			var meta_hide = [];
+			$('.meta-option', this).each(function(){
+				if ( $(this).hasClass('tpl-admin-hide') ) {
+					meta_hide.push( true );
+				}
+				else {
+					meta_hide.push( false );
+				}
+			});
+			if ( $.inArray( true, meta_hide ) > -1 && $.inArray( false, meta_hide ) < 0 ) {
+				$(this).addClass('tpl-admin-hide');
+			}
+			else {
+				$(this).removeClass('tpl-admin-hide');
+			}
+		});
+
+
 	}
 
 	tpl_condition_updater();
 
-	$('input, select, textarea').change(function(){
+	$('body').on('change', 'select', function(){
 		tpl_condition_updater();
 	});
 
-	$('input, textarea').keyup(function(){
+	$('body').on('keyup', 'input, textarea', function(){
 		tpl_condition_updater();
 	});
+
+
+
+
+/*
+
+	6. PAGE BUILDER SETTINGS
+	========================
+
+*/
+
+
+	// First let's save the previous value of the columnset into a global variable in case we want to cancel the action
+	$('body').on('select2:open', '.tpl-columnset select', function(){
+
+		Themple_Admin.prev_columnset = $(this).val();
+
+	// Now handle the select environments
+	}).on('select2:select', '.tpl-columnset select', function(){
+
+		var old_col_no = Themple_Admin.prev_columnset.split('-').length;
+		var columnset = $(this).val().split('-');
+
+		// Remove branch
+		if ( columnset.length < old_col_no ) {
+			Themple_Admin.pb_fewer_instances = Themple_Admin.pb_fewer_instances.replace( '##N##', old_col_no - columnset.length );
+
+			// Do we need to confirm the remove command? (can be set up in Framework Options)
+			if ( Themple_Admin.pb_fewer_confirm == 'yes' ) {
+				var remove = confirm( Themple_Admin.pb_fewer_instances );
+			}
+			// If not, the green light is the default for deletion
+			else {
+				var remove = true;
+			}
+			// Now removing the rows
+			if ( remove == true ) {
+				for ( var i = old_col_no; i >= columnset.length; i-- ) {
+					tpl_remove_row( $(this).closest('.tpl-field').parent().find('.tpl-pb-apps[data-instance="'+ i +'"]') );
+				}
+			}
+			// If cancel was pressed, make sure that we set Select2 to the previous value
+			else {
+				$(this).val(Themple_Admin.prev_columnset).trigger('change');
+			}
+		}
+
+		// Add branch
+		else if ( columnset.length > old_col_no ) {
+
+			for ( var i = old_col_no + 1; i <= columnset.length; i++ ) {
+				tpl_add_row( $(this).closest('.tpl-field').parent().find('.tpl-pb-apps').closest('.subitem-repeat-wrapper'), $(this).closest('.tpl-field').parent().find('.tpl-pb-apps').first().attr('data-name') );
+			}
+
+		}
+
+	});
+
 
 
 });

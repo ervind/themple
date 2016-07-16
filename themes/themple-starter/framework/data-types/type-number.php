@@ -11,16 +11,20 @@ class TPL_Number extends TPL_Data_Type {
 
 
 	// Writes the form field in wp-admin
-	public function form_field_content () {
+	public function form_field_content ( $for_bank = false ) {
 
-		echo '<div class="datatype-container">';
-
-		if ( $this->get_current_option() == "" ) {
+		if ( $this->get_option() == "" ) {
 			$value = $this->default;
 		}
 		else {
-			$value = $this->get_current_option();
+			$value = $this->get_option();
 		}
+
+		if ( $for_bank == true ) {
+			$value = $this->default;
+		}
+
+		echo '<div class="datatype-container">';
 
 		echo '<input type="number" id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" value="' . esc_attr( $value ) . '"';
 
@@ -44,44 +48,20 @@ class TPL_Number extends TPL_Data_Type {
 	}
 
 
-	// Returns the formatted value (with suffix and prefix)
-	public function get_value ( $args = array() ) {
+	// Formats the option into value
+	public function format_option ( $value, $args = array() ) {
 
-		// Spec branch (picks an instance of an array)
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
-
-			$value = $this->get_option( array( "i" => $args["i"] ) );
-			if ( !intval( $value ) ) {
-				return false;
-			}
-			return $this->format_option( $value );
-
-		}
-
-		// Full branch (returns the full array)
-		if ( $this->repeat == true && is_array( $this->get_option() ) ) {
-
-			$values = $this->get_option();
-			foreach ( $values as $i => $value ) {
-				if ( !intval( $value ) ) {
-					$values[$i] = false;
-				}
-				else {
-					$values[$i] = $this->format_option( $value );
-				}
-			}
-			return $values;
-
-		}
-
-		// Single mode if not repeater
-		if ( !intval( $this->get_current_option() ) ) {
+		if ( !intval( $value ) ) {
 			return false;
 		}
-		return $this->format_option( $this->get_current_option() );
+		if ( is_array( $value ) ) {
+			$value = $value[0];
+		}
+		else {
+			return $this->prefix . $value . $this->suffix;
+		}
 
 	}
-
 
 
 }

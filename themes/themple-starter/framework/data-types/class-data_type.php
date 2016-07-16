@@ -1,5 +1,8 @@
 <?php
 
+// This is the default data type class. All the data types are children of this class.
+
+
 class TPL_Data_Type {
 
 	// Setting up some defaults...
@@ -9,19 +12,25 @@ class TPL_Data_Type {
 	protected	$prefix				= "";			// Is put before the value
 	protected	$suffix				= "";			// Is put after the value
 	protected	$placeholder		= "";			// Used in admin if no value is added yet
-	protected	$form_ref_suffix	= "";			// The form field reference name
 	protected	$is_subitem			= false;		// Is set to TRUE if it's a subitem of another option
 	protected	$default			= '';			// Default value init
+	protected	$path				= array();		// Used to find instances and subitems of an option
+	public		$data_name			= '';			// Used by forms in the admin
+	public		$js					= false;		// By default, JS is turned off
 	public		$js_func			= "get_value";	// Which function should create the JS variable
 	public		$repeat				= false;		// Is it a repeater / multi-instance option?
-	public		$instance			= 0;			// Used only for repeater fields
 	public		$admin_class		= '';			// Extra class added to the admin field
 	public		$description		= '';			// Initialize the option's description
-
+	public		$condition_connected = '';			// Some initialization for conditions
 
 
 	// Sets up the object attributes while registering options
 	public function __construct( $args ) {
+
+		// If the field is repeater, this is written on the Add button
+		if ( !isset( $args["repeat_button_title"] ) ) {
+			$args["repeat_button_title"] = __( 'Add row', 'themple' );
+		}
 
 		// Setting up initial values
 		foreach ( $args as $key => $arg ) {
@@ -54,16 +63,25 @@ class TPL_Data_Type {
 			);
 		}
 
-		// Set up the basic form reference. For simple data types it's recommended to be the same as the option name, for extended data types it can be a custom value
-		if ( !isset( $this->form_ref_base ) ) {
-			$this->form_ref_base = $this->name;
+		if ( empty( $this->path ) ) {
+			$path_n = $this->get_level() * 2;
+			$this->path[$path_n] = $this->name;
 		}
-
-		$this->form_ref_suffix = '[' . $this->instance . ']';
 
 		// Turning off the LESS engine if it's not a primary section
 		if ( !tpl_is_primary_section( $this->section ) ) {
 			$this->less = false;
+		}
+
+		if ( $this->is_subitem ) {
+			$this->data_name .= '/' . $this->name;
+		}
+		else {
+			$this->data_name = $this->name;
+		}
+
+		if ( isset( $this->condition ) ) {
+			$this->condition_connected = $this->data_name;
 		}
 
 	}
@@ -75,65 +93,98 @@ class TPL_Data_Type {
 		global $tpl_sections;
 
 		if ( tpl_has_section_post_type( $this->section, "framework_options" ) ) {
-			$form_ref = 'tpl_framework_options[' . $this->form_ref_base . ']';
+			$form_ref = 'tpl_framework_options[' . $this->path[0] . ']';
 		}
 
 		else if ( !tpl_has_section_post_type( $this->section, "theme_options" ) ) {
-			$form_ref = $this->section . '_' . $this->form_ref_base;
+			$form_ref = $this->section . '_' . $this->path[0];
 		}
 
 		else {
-			$form_ref = 'tpl_theme_options[' . $this->form_ref_base . ']';
+			$form_ref = 'tpl_theme_options[' . $this->path[0] . ']';
 		}
 
-		return $form_ref . $this->form_ref_suffix;
+		foreach ( $this->path as $i => $step ) {
+			if ( $i > 0 ) {
+				$form_ref .= '[' . $step . ']';
+			}
+		}
+
+		return $form_ref;
 
 	}
 
 
 	// Shows the form field in wp-admin
-	public function form_field () {
+	public function form_field ( $for_bank = false ) {
 
-		if ( $this->repeat == true ) {
+		$path_i = $this->get_level() * 2 + 1;
+
+		if ( !$this->is_subitem ) {
+			$this->path = array( 0 => $this->name );
+		}
+
+		if ( $this->repeat !== false ) {
 
 			$values = $this->get_option();
 
 			// If it was a non-repeater field before, convert the result to array
-			if ( !is_array( $values ) ) {
+			if ( !is_array( $values ) || !is_numeric( key( $values ) ) ) {
 				$values = array( 0 => $values );
 			}
 
-			$i = 0;
+			if ( ( count( $values ) >= 1 && $values[0] != '' ) || $for_bank == true || isset( $this->repeat["number"] ) ) {
 
-			foreach ( $values as $value ) {
-				$this->instance = $i;
-				$this->form_ref_suffix = '[' . $this->instance . ']';
-				$this->form_field_before();
-				$this->form_field_content();
-				$this->form_field_after();
-				$i++;
+				$end = count( $values );
+
+				for ( $i = 0; $i < $end; $i++ ) {
+
+					if ( !$this->is_subitem ) {
+						$this->path[$path_i] = $i;
+					}
+
+					$this->form_field_before();
+					$this->form_field_content( $for_bank );
+					$this->form_field_after();
+
+					if ( $for_bank == true ) {
+						break;
+					}
+
+				}
+
 			}
 
 		}
 
 		else {
 
+			if ( !$this->is_subitem ) {
+				$this->path[$path_i] = 0;
+			}
+
 			$this->form_field_before();
-			$this->form_field_content();
+			$this->form_field_content( $for_bank );
 			$this->form_field_after();
 
 		}
 
 	}
 
+
 	// Container start of the form field
 	public function form_field_before ( $extra_class = '' ) {
 
-		// Add the data-instance attribute if it's a repeater field
-		$data_instance = '';
+		$path_i = $this->get_level() * 2 + 1;
 
-		if ( $this->repeat == true ) {
-			$data_instance = ' data-instance="' . $this->instance . '"';
+		if ( isset( $this->path[$path_i] ) ) {
+			$data_instance = $this->path[$path_i];
+		}
+		else {
+			$data_instance = 0;
+		}
+
+		if ( $this->repeat !== false ) {
 			$extra_class .= ' repeat';
 		}
 
@@ -142,27 +193,22 @@ class TPL_Data_Type {
 			$extra_class .= ' ' . $this->admin_class;
 		}
 
-		if ( $extra_class != '' ) {
-			$extra_class .= ' ' . $extra_class;
-		}
-
+		// If child item of a combined field
 		if ( $this->is_subitem ) {
-			$data_name = $this->parent . '/' . $this->name;
 			$extra_class .= ' subitem';
 		}
-		else {
-			$data_name = $this->name;
+
+		// Which condition is it connected to if there's any
+		$data_connected = '';
+		if ( $this->condition_connected != '' ) {
+			$data_connected = ' data-connected="' . $this->condition_connected . '"';
 		}
 
-		$class = preg_replace( '/\s+/', ' ', 'tpl-field '. $this->type . $extra_class  );
+		$class = preg_replace( '/\s+/', ' ', 'tpl-field '. $this->type . ' ' . $extra_class  );
 
-		echo '<div class="' . $class . '"' . $data_instance . ' data-name="' . $data_name . '">';
+		echo '<div class="' . $class . '" data-instance="' . $data_instance . '" data-name="' . $this->data_name . '" data-level="' . $this->get_level() . '"' . $data_connected . '>';
 
-		if ( $this->is_subitem == true ) {
-			echo '<label for="'. $this->form_ref() .'">' . $this->title . '</label>';
-		}
-
-		if ( $this->repeat == true ) {
+		if ( $this->repeat !== false ) {
 			echo '<div class="admin-icon arranger"><span class="hovermsg">' . __( 'Drag & Drop to reorder', 'themple' ) . '</span></div>';
 		}
 
@@ -170,11 +216,12 @@ class TPL_Data_Type {
 
 	}
 
-	// Content of the form field
-	public function form_field_content () {
 
-		$value = $this->get_current_option();
-		if ( $value == '' ) {
+	// Content of the form field
+	public function form_field_content ( $for_bank = false ) {
+
+		$value = $this->get_option();
+		if ( $value == '' || $for_bank == true ) {
 			$value = $this->default;
 		}
 		echo $value;
@@ -183,6 +230,8 @@ class TPL_Data_Type {
 
 	// Container end of the form field
 	public function form_field_after () {
+
+		$path_i = $this->get_level() * 2 + 1;
 
 		if ( !empty( $this->default ) || !empty( $this->prefix ) || !empty( $this->suffix ) ) {
 			echo ' <div class="tpl-default-container">
@@ -210,9 +259,11 @@ class TPL_Data_Type {
 
 		echo '</div>';		// .tpl-field-inner
 
-		if ( $this->repeat == true ) {
-			echo '<div class="admin-icon remover"><span class="hovermsg">' . __( 'Remove row', 'themple' ) . '</span></div>';
-			$this->instance++;
+		if ( $this->repeat !== false ) {
+			if ( !isset( $this->repeat["number"] ) ) {
+				echo '<div class="admin-icon remover"><span class="hovermsg">' . __( 'Remove row', 'themple' ) . '</span></div>';
+			}
+			$this->path[$path_i]++;
 		}
 
 		echo '</div>';
@@ -245,8 +296,12 @@ class TPL_Data_Type {
 
 		global $post, $tpl_sections;
 
-		if ( isset( $args["i"] ) ) {
-			$i = $args["i"];
+		if ( isset( $args["path"] ) ) {
+			$this->path = $args["path"];
+		}
+
+		if ( !isset( $this->path[0] ) ) {
+			$this->path[0] = $this->name;
 		}
 
 		if ( !is_object ( $post ) ) {
@@ -285,34 +340,42 @@ class TPL_Data_Type {
 			$options = get_option ( 'tpl_theme_options', $this->default );
 		}
 
+
+		// Deciding what to return
 		if ( is_array( $options ) ) {
 
-			if ( !array_key_exists ( $this->form_ref_base, $options ) ) {
-				return $this->default;
+			if ( $this->repeat === false && count( $this->path ) == 1 ) {
+				$this->path[1] = 0;
 			}
-			else {
-				if ( $this->repeat == true ) {
-					if ( !isset( $i ) ) {
-						return $options[$this->form_ref_base];
-					}
-					else {
-						if ( is_array( $options[$this->form_ref_base] ) ) {
-							return $options[$this->form_ref_base][$i];
+
+			if ( isset( $options[$this->path[0]] ) ) {
+
+				$value = $options[$this->path[0]];
+
+				foreach ( $this->path as $step => $item ) {
+					if ( $step > 0 ) {
+						if ( isset( $value[$item] ) ) {
+							if ( is_array( $value ) ) {
+								$value = $value[$item];
+							}
 						}
 						else {
-							return $options[$this->form_ref_base];
+							$value = $this->default;
+							break;
 						}
 					}
 				}
-				else {
-					if ( is_array( $options[$this->form_ref_base] ) ) {
-						return $options[$this->form_ref_base][$this->instance];
-					}
-					else {
-						return $options[$this->form_ref_base];
-					}
-				}
+
 			}
+
+			else {
+
+				$value = $this->default;
+
+			}
+
+			// Normal return
+			return $value;
 
 		}
 		else {
@@ -324,27 +387,83 @@ class TPL_Data_Type {
 	}
 
 
-	// Gets the single option values from where the $this->instance pointer is
-	public function get_current_option () {
+	// Returns the formatted value (with suffix and prefix)
+	public function get_value ( $args = array() ) {
 
-		$value = $this->get_option( array( 'i' => $this->instance ) );
+		$path_n = $this->get_level() * 2;
+		$path_i = $this->get_level() * 2 + 1;
 
-		if ( $this->is_subitem == true ) {
+		if ( !isset( $args["path"][$path_n] ) ) {
+			$args["path"][$path_n] = $this->name;
+		}
 
-			if ( isset( $value[$this->name] ) && is_array( $value ) ) {
-				return $value[$this->name];
+		if ( $this->repeat === false ) {
+			$args["path"][$path_i] = 0;
+		}
+
+		$result = array();
+		ksort( $args["path"] );
+
+		$values = $this->get_option( $args );
+
+		// Repeater branch
+		if ( !isset( $args["path"][$path_i] ) && is_array( $values ) ) {
+
+			foreach ( $values as $i => $value ) {
+				$result[$i] = $this->format_option( $value, $args );
 			}
-			else {
-				return $this->default;
+
+		}
+
+		// Single branch
+		else {
+
+			$result = $this->format_option( $values, $args );
+
+		}
+
+		return $result;
+
+	}
+
+
+	// Echoes the value of the option
+	public function value ( $args = array() ) {
+
+		$path_i = $this->get_level() * 2 + 1;
+
+		if ( $this->repeat === false ) {
+			$args["path"][$path_i] = 0;
+		}
+
+		$values = $this->get_value( $args );
+
+		if ( !isset( $args["path"][$path_i] ) ) {
+
+			if ( is_array( $values ) ) {
+				echo '<ul>';
+				foreach ( $values as $value ) {
+					echo '<li>' . $value . '</li>';
+				}
+				echo '</ul>';
+				return;
 			}
 
 		}
 
 		else {
 
-			return $value;
+			echo $this->get_value( $args );
 
 		}
+
+	}
+
+
+	// Returns the full option object
+	public function get_object ( $args = array() ) {
+
+		return $this;
 
 	}
 
@@ -357,60 +476,12 @@ class TPL_Data_Type {
 	}
 
 
-	// Returns the formatted value (with suffix and prefix)
-	public function get_value ( $args = array() ) {
+	// Return which level the option is on in the subitem hierarchy ( 0 = base level )
+	protected function get_level () {
 
-		// Spec branch (picks an instance of an array)
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
-			return $this->format_option( $this->get_option( array( "i" => $args["i"] ) ) );
-		}
+		$level = substr_count( $this->data_name, '/' );
 
-		// Full branch (returns the full array)
-		if ( $this->repeat == true ) {
-
-			$values = $this->get_option();
-			foreach ( $values as $i => $value ) {
-				$values[$i] = $this->format_option( $value );
-			}
-			return $values;
-
-		}
-
-		// Single mode if not repeater
-		return $this->format_option( $this->get_current_option() );
-
-	}
-
-
-	// Echoes the value of the option
-	public function value ( $args = array() ) {
-
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
-			echo $this->get_value( $args );
-			return;
-		}
-
-		if ( $this->repeat == true ) {
-
-			$values = $this->get_value( $args );
-			echo '<ul>';
-			foreach ( $values as $value ) {
-				echo '<li>' . $value . '</li>';
-			}
-			echo '</ul>';
-			return;
-
-		}
-
-		echo $this->get_value( $args );
-
-	}
-
-
-	// Returns the full option object
-	public function get_object () {
-
-		return $this;
+		return $level;
 
 	}
 
@@ -448,43 +519,74 @@ class TPL_Data_Type {
 
 
 	// Set less var
-	public function set_less_vars() {
+	public function set_less_vars( $args = array() ) {
 
 		if ( $this->less == true ) {
 
-			$values = $this->get_option();
 			$less_variable = '';
 
-			if ( $this->repeat == true ) {
+			$path_n = $this->get_level() * 2;
+			$path_i = $this->get_level() * 2 + 1;
 
-				if ( is_array( $values ) ) {
-					foreach ( $values as $i => $value ) {
-						$this->instance = $i;
-						if ( $i == 0 ) {
-							$less_variable .= $this->format_less_var( $this->name, $value );
-						}
-						$name = $this->name . '__' . $i;
-						$less_variable .= $this->format_less_var( $name, $value );
-					}
-					$this->instance = 0;
+			$args["path"][$path_n] = $this->name;
+
+			$values = $this->get_option( $args );
+
+			$this->path = $args["path"];
+
+			$name = '';
+			$shortname = '';
+			$shortable = true;
+
+			foreach ( $this->path as $step => $item ) {
+
+				$name .= $item;
+
+				if ( $step % 2 == 0 ) {
+					$shortname .= $item;
 				}
-				else {
-					$less_variable .= $this->format_less_var( $this->name, $values );
+
+				if ( $step < count( $this->path ) - 1 ) {
+					$name .= '__';
+					if ( $step % 2 == 0 ) {
+						$shortname .= '__';
+					}
+				}
+
+				if ( $step % 2 == 1 && $item != 0 ) {
+					$shortable = false;
 				}
 
 			}
 
+			if ( is_array( $values ) || ( $this->repeat !== false ) ) {
+
+				foreach ( $values as $i => $value ) {
+
+					$this->path[$path_i] = $i;
+
+					if ( $this->path[$path_i] > 0 ) {
+						$shortable = false;
+					}
+
+					if ( $shortable == true ) {
+						$less_variable .= $this->format_less_var( $shortname, $value );
+					}
+
+					$sname = $name . '__' . $i;
+					$less_variable .= $this->format_less_var( $sname, $value );
+
+				}
+
+			}
 			else {
 
-				$less_variable = $this->format_less_var( $this->name, $values );
+				$less_variable .= $this->format_less_var( $name, $values );
 
 			}
 
 			return $less_variable;
 
-		}
-		else {
-			return;
 		}
 
 	}
@@ -495,7 +597,7 @@ class TPL_Data_Type {
 
 		if ( isset( $this->condition ) ) {
 			return array(
-				$this->name => $this->condition
+				$this->data_name => $this->condition
 			);
 		}
 

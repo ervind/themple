@@ -10,11 +10,18 @@ class TPL_Text extends TPL_Data_Type {
 
 
 	// Writes the form field in wp-admin
-	public function form_field_content () {
+	public function form_field_content ( $for_bank = false ) {
+
+		if ( $for_bank == true ) {
+			$value = $this->default;
+		}
+		else {
+			$value = esc_attr( $this->get_option() );
+		}
 
 		echo '<div class="datatype-container">';
 
-		echo '<input type="text" id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" value="' . esc_attr( $this->get_current_option() ) . '"';
+		echo '<input type="text" id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" value="' . $value . '"';
 
 		if ( $this->size > 0 ) {
 			echo ' maxlength="' . intval( $this->size ) . '"';

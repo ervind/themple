@@ -2330,6 +2330,11 @@ small {
 .clear {
   clear: both;
 }
+.clearafter::after {
+  clear: both;
+  display: block;
+  content: '';
+}
 .row:before,
 .row:after {
   content: "";
@@ -2428,7 +2433,7 @@ TABLE OF CONTENTS
 -----------------
 */
 body {
-  font: 400 14px "Arial";
+  font: 400 14px "arial";
   color: #666666;
   background: #fff;
 }
@@ -2780,7 +2785,7 @@ textarea {
 */
 .logo-wrapper {
   text-align: left;
-  padding-top: 30px;
+  padding-top: 40px;
   padding-bottom: 20px;
 }
 .logo-wrapper a {
@@ -2966,9 +2971,6 @@ textarea {
 .pagination {
   margin-top: 80px;
 }
-.content {
-  font-size: 16px;
-}
 .content h1 a,
 .content h2 a,
 .content h3 a,
@@ -3139,6 +3141,26 @@ textarea {
 }
 .comment-form .form-submit {
   margin-top: 1.8em;
+}
+.tpl-pb-wrapper .row {
+  padding-bottom: 20px;
+}
+.tpl-pb-wrapper .row .tpl-pb-column {
+  min-height: 20px;
+}
+.tpl-pb-wrapper .row .tpl-pb-column h1,
+.tpl-pb-wrapper .row .tpl-pb-column h2,
+.tpl-pb-wrapper .row .tpl-pb-column h3,
+.tpl-pb-wrapper .row .tpl-pb-column h4,
+.tpl-pb-wrapper .row .tpl-pb-column h5,
+.tpl-pb-wrapper .row .tpl-pb-column h6 {
+  margin-top: 0;
+}
+.tpl-pb-wrapper .row .tpl-pb-column:first-child {
+  padding-left: 0;
+}
+.tpl-pb-wrapper .row .tpl-pb-column:last-child {
+  padding-right: 0;
 }
 /*
 -----------------

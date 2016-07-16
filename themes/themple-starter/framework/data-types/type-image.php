@@ -31,17 +31,16 @@ class TPL_Image extends TPL_Data_Type {
 
 
 	// Writes the form field in wp-admin
-	public function form_field_content () {
+	public function form_field_content ( $for_bank = false ) {
 
-		$id = $this->get_current_option();
-		$imgdata = wp_get_attachment_image_src( $id, 'thumbnail' );
-
-		if ( $this->repeat == true ) {
-			$id_name = $this->name . '_' . $this->instance;
+		if ( $for_bank == true ) {
+			$id = '';
 		}
 		else {
-			$id_name = $this->name;
+			$id = $this->get_option();
 		}
+
+		$imgdata = wp_get_attachment_image_src( $id, 'thumbnail' );
 
 		echo '<div class="datatype-container">';
 
@@ -102,49 +101,14 @@ class TPL_Image extends TPL_Data_Type {
 		}
 
 		if ( !empty( $atts ) ) {
-			return wp_get_attachment_image ( $value, $size, 0, $atts );
+			return wp_get_attachment_image ( intval( $value ), $size, 0, $atts );
 		}
 		else {
-			return wp_get_attachment_image ( $value, $size );
+			return wp_get_attachment_image ( intval( $value ), $size );
 		}
 
 	}
 
-
-	// Returns the image element
-	public function get_value ( $args = array() ) {
-
-		// Spec branch (picks an instance of an array)
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
-
-			$img_id = intval( $this->get_option( array( "i" => $args["i"] ) ) );
-			if ( is_numeric ( $img_id ) ) {
-				return $this->format_option( $img_id, $args );
-			}
-
-		}
-
-		// Full branch (returns the full array)
-		if ( $this->repeat == true ) {
-
-			$values = $this->get_option();
-			foreach ( $values as $i => $img_id ) {
-				$img_id = intval( $img_id );
-				if ( is_numeric ( $img_id ) ) {
-					$values[$i] = $this->format_option( $img_id, $args );
-				}
-			}
-			return $values;
-
-		}
-
-		// Single mode if not repeater
-		$img_id = intval( $this->get_current_option() );
-		if ( is_numeric ( $img_id ) ) {
-			return $this->format_option( $img_id, $args );
-		}
-
-	}
 
 
 	// Gives you the image URL based on the option name
@@ -158,38 +122,47 @@ class TPL_Image extends TPL_Data_Type {
 			$size = $args["size"];
 		}
 
-		// Spec branch (picks an instance of an array)
-		if ( is_array( $args ) && isset( $args["i"] ) && is_numeric( $args["i"] ) ) {
+		$path_n = $this->get_level() * 2;
+		$path_i = $this->get_level() * 2 + 1;
 
-			$img_id = intval( $this->get_option( array( "i" => $args["i"] ) ) );
-			if ( is_numeric ( $img_id ) ) {
-				$img_src = wp_get_attachment_image_src ( $img_id, $size );
-				return $img_src[0];
-			}
-
+		if ( !isset( $args["path"][$path_n] ) ) {
+			$args["path"][$path_n] = $this->name;
 		}
 
-		// Full branch (returns the full array)
-		if ( $this->repeat == true ) {
+		if ( $this->repeat === false ) {
+			$args["path"][$path_i] = 0;
+		}
 
-			$values = $this->get_option();
+		$result = array();
+
+		$values = $this->get_option( $args );
+
+		// Repeater branch
+		if ( !isset( $args["path"][$path_i] ) && is_array( $values ) ) {
+
+			$values = $this->get_option( $args );
 			foreach ( $values as $i => $img_id ) {
 				$img_id = intval( $img_id );
 				if ( is_numeric ( $img_id ) ) {
 					$img_src = wp_get_attachment_image_src ( $img_id, $size );
-					$values[$i] = $img_src[0];
+					$result[$i] = $img_src[0];
 				}
 			}
-			return $values;
 
 		}
 
-		// Single mode if not repeater
-		$img_id = intval( $this->get_current_option() );
-		if ( is_numeric ( $img_id ) ) {
-			$img_src = wp_get_attachment_image_src ( $img_id, $size );
+		// Single branch
+		else {
+
+			$img_id = intval( $values );
+			if ( is_numeric ( $img_id ) ) {
+				$img_src = wp_get_attachment_image_src ( $img_id, $size );
+			}
+			$result = $img_src[0];
+
 		}
-		return $img_src[0];
+
+		return $result;
 
 	}
 
@@ -204,12 +177,8 @@ class TPL_Image extends TPL_Data_Type {
 			$less_variable .= '"';
 		}
 
-		if ( $this->repeat == true ) {
-			$less_variable .= $this->get_image_url( array( 'i' => $this->instance ) );
-		}
-		else {
-			$less_variable .= $this->get_image_url();
-		}
+		$image_url_obj = wp_get_attachment_image_src ( $value, $this->size );
+		$less_variable .= $image_url_obj[0];
 
 		// closing the string if needed
 		if ( $this->less_string == true ) {
@@ -229,29 +198,22 @@ class TPL_Image extends TPL_Data_Type {
 // Gives you the image URL based on the option name
 function tpl_get_image_url ( $args ) {
 
-	global $tpl_options_array;
-
 	if ( is_array( $args ) ) {
 		$name = $args["name"];
 		$caller = $args;
 	}
 	else {
 		$name = $args;
-		$caller = array(
-			'name'	=> $name
-		);
+		$path = explode( '/', $name );
+		$caller["name"] = $path[0];
+		$caller["path"] = $path;
 	}
 
 	$imgobj = tpl_get_option_object( $name );
 
 	$values = $imgobj->get_image_url( $caller );
 
-	if ( is_array( $values ) ) {
-		return $values[0];
-	}
-	else {
-		return $values;
-	}
+	return $values;
 
 }
 
@@ -267,14 +229,17 @@ function tpl_logo ( $link = true, $args = false ) {
 		$args = array(
 			'alt'	=> get_bloginfo( "name" ),
 			'title'	=> get_bloginfo( "name" ),
-			'class'	=> "logo"
+			'class'	=> "logo",
+			'path'	=> array( 0 => 'tpl_logo' ),
 		);
 	}
 
 	if ( tpl_option_registered ( "tpl_logo" ) ) {
 
 		$imgobj = tpl_get_option_object( "tpl_logo" );
-		$args["i"] = $imgobj->instance;
+		if ( $imgobj->repeat !== false ) {
+			$args["path"][1] = 0;
+		}
 
 		if ( $imgobj->get_option() != '' ) {
 
