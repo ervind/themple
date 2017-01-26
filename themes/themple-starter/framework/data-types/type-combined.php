@@ -38,8 +38,10 @@ class TPL_Combined extends TPL_Data_Type {
 
 			$parts_objects[$part["name"]] = new $type_class( $part );
 
+			$path_i = $this->get_level() * 2 + 1;
 			$path_s = $this->get_level() * 2 + 2;
 			$parts_objects[$part["name"]]->path = $this->path;
+			$parts_objects[$part["name"]]->path[$path_i] = 0;
 			$parts_objects[$part["name"]]->path[$path_s] = $part["name"];
 
 		}
@@ -56,13 +58,13 @@ class TPL_Combined extends TPL_Data_Type {
 		$path_i = $this->get_level() * 2 + 1;
 		$path_s = $this->get_level() * 2 + 2;
 
-		echo '<div class="tpl-combined-wrapper datatype-container">';
+		echo '<div class="tpl-combined-wrapper">';
 
 		foreach ( $this->parts as $part ) {
 
 			$data_connected = '';
 			if ( $part->condition_connected != '' ) {
-				$data_connected = ' data-connected="' . $part->condition_connected . '"';
+				$data_connected = ' data-connected="' . esc_attr( $part->condition_connected ) . '"';
 			}
 
 			$part->path = $this->path;
@@ -75,14 +77,14 @@ class TPL_Combined extends TPL_Data_Type {
 
 				if ( !isset( $part->path[$path_s+1] ) || $part->path[$path_s+1] == 0 ) {
 
-					echo '<label for="'. $part->form_ref() .'"' . $data_connected . '>' . $part->title . ' </label>';
+					echo '<label for="'. esc_attr( $part->form_ref() ) .'"' . $data_connected . '>' . esc_html( $part->title ) . ' </label>';
 					if ( isset( $part->description ) && $part->description != '' ) {
-						echo '<i class="fa fa-lg fa-question-circle tpl-admin-question admin-icon"' . $data_connected . '><span class="hovermsg">' . $part->description . '</span></i>';
+						echo '<i class="fa fa-lg fa-question-circle tpl-admin-question tpl-admin-icon"' . $data_connected . ' title="' . esc_attr( $part->description ) . '"></i>';
 					}
 
 				}
 
-				echo '<div class="subitem-repeat-wrapper"' . $data_connected . '>';
+				echo '<div class="tpl-subitem-repeat-wrapper"' . $data_connected . '>';
 
 				$items = $part->get_option();
 
@@ -117,7 +119,7 @@ class TPL_Combined extends TPL_Data_Type {
 				echo '</div>';
 
 				if ( !isset( $part->repeat["number"] ) ) {
-					echo '<div class="button-container"' . $data_connected . '><button class="repeat-add" data-for="' . $part->data_name . '">' . $part->repeat_button_title . '</button></div>';
+					echo '<div class="tpl-button-container"' . $data_connected . '><button class="tpl-repeat-add" data-for="' . esc_attr( $part->data_name ) . '">' . esc_html( $part->repeat_button_title ) . '</button></div>';
 				}
 
 			}
@@ -126,9 +128,9 @@ class TPL_Combined extends TPL_Data_Type {
 
 				if ( !isset( $part->path[$path_s+1] ) || $part->path[$path_s+1] == 0 ) {
 
-					echo '<label for="'. $part->form_ref() .'"' . $data_connected . '>' . $part->title . ' </label>';
+					echo '<label for="'. esc_attr( $part->form_ref() ) .'"' . $data_connected . '>' . esc_html( $part->title ) . ' </label>';
 					if ( isset( $part->description ) && $part->description != '' ) {
-						echo '<i class="fa fa-lg fa-question-circle tpl-admin-question admin-icon"' . $data_connected . '><span class="hovermsg">' . $part->description . '</span></i>';
+						echo '<i class="fa fa-lg fa-question-circle tpl-admin-question tpl-admin-icon"' . $data_connected . ' title="' . esc_attr( $part->description ) . '"></i>';
 					}
 
 				}
@@ -152,9 +154,6 @@ class TPL_Combined extends TPL_Data_Type {
 		echo '</div>';		// .tpl-field-inner
 
 		if ( $this->repeat !== false ) {
-			if ( !isset( $this->repeat["number"] ) ) {
-				echo '<div class="admin-icon remover"><span class="hovermsg">' . __( 'Remove row', 'themple' ) . '</span></div>';
-			}
 			$this->path[$path_i]++;
 		}
 
@@ -261,7 +260,7 @@ class TPL_Combined extends TPL_Data_Type {
 				foreach ( $this->parts as $part ) {
 
 					if ( !empty( $value[$part->name] ) ) {
-						echo '<dt>' . $part->title . '</dt>';
+						echo '<dt>' . esc_html( $part->title ) . '</dt>';
 						$args["path"][$path_i] = $i;
 						echo '<dd>';
 						$part->value( $args );
@@ -287,7 +286,7 @@ class TPL_Combined extends TPL_Data_Type {
 
 					if ( !empty( $values[$part->name] ) ) {
 						$args["path"][$path_s] = $part->name;
-						echo '<dt>' . $part->title . '</dt>';
+						echo '<dt>' . esc_html( $part->title ) . '</dt>';
 						echo '<dd>';
 						$part->value( $args );
 						echo '</dd>';

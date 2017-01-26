@@ -3,13 +3,15 @@
 // You can add here your own Page Builder apps based on the Page Builder App API
 
 
-tpl_register_pb_app( array(
-	'name'		=> 'the_excerpt',
-	'title'		=> __( 'The excerpt (Starter)', 'themple-starter' ),
-	'class'		=> 'TPL_PB_The_Excerpt',
-	'pos'		=> 60,
-) );
-
+// The Excerpt PB App
+add_action( 'init', function() {
+	tpl_register_pb_app( array(
+		'name'		=> 'the_excerpt',
+		'title'		=> __( 'The excerpt (Starter)', 'themple-starter' ),
+		'class'		=> 'TPL_PB_The_Excerpt',
+		'pos'		=> 60,
+	) );
+});
 
 class TPL_PB_The_Excerpt {
 
@@ -27,20 +29,13 @@ class TPL_PB_The_Excerpt {
 					"no"			=> __( 'No', 'themple-starter' ),
 					"yes"			=> __( 'Yes', 'themple-starter' ),
 				),
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'the_excerpt',
-					),
-				),
 			),
 		);
 
 	}
 
 
+	// Front end output of the app
 	public function frontend_value( $values = array() ) {
 
 		global $post;
@@ -53,7 +48,7 @@ class TPL_PB_The_Excerpt {
 		ob_end_clean();
 
 		if ( $values["the_excerpt_readmore"] != 'yes' ) {
-			$link = explode( '<a class="readmore', $result );
+			$link = explode( '<a class="tpl-readmore', $result );
 			$result = $link[0];
 		}
 

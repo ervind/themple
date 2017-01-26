@@ -48,6 +48,16 @@ $section = array (
 tpl_register_section ( $section );
 
 
+$section = array (
+	"name"			=> 'other',
+	"title"			=> __( 'Other', 'themple-starter' ),
+	"description"	=> __( 'Other options', 'themple-starter' ),
+	"tab"			=> __( 'Other', 'themple-starter' )
+);
+tpl_register_section ( $section );
+
+
+
 
 // And some custom field sections for posts
 

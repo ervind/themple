@@ -7,15 +7,15 @@ require_once "framework/themple.php";
 // define( 'HIDE_FRAMEWORK_OPTIONS', true );
 
 
-// Now loading the helper functions sorted into different functions subfiles.
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-init.php' );
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-images.php' );
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-header.php' );
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-widget.php' );
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-content.php' );
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-comments.php' );
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-plugins.php' );
-tpl_loader( dirname ( __FILE__ ) . '/inc/functions-pb_apps.php' );
+// Now loading the theme functions sorted into different functions subfiles.
+tpl_loader( get_template_directory() . '/inc/functions-init.php' );
+tpl_loader( get_template_directory() . '/inc/functions-images.php' );
+tpl_loader( get_template_directory() . '/inc/functions-header.php' );
+tpl_loader( get_template_directory() . '/inc/functions-widget.php' );
+tpl_loader( get_template_directory() . '/inc/functions-content.php' );
+tpl_loader( get_template_directory() . '/inc/functions-comments.php' );
+tpl_loader( get_template_directory() . '/inc/functions-plugins.php' );
+tpl_loader( get_template_directory() . '/inc/functions-pb_apps.php' );
 
 
 // Now you can start adding your own functions below this line...

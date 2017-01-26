@@ -20,11 +20,45 @@ class TPL_Textarea extends TPL_Data_Type {
 			$value = esc_textarea( $this->get_option() );
 		}
 
-		echo '<div class="tpl-textarea-wrapper datatype-container">';
+		echo '<div class="tpl-textarea-wrapper tpl-datatype-container">';
 
-		echo '<textarea id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" rows="' . $this->size . '">'
+		if ( $this->prefix ) {
+			echo '<span class="tpl-datatype-prefix tpl-preview-0">' . $this->prefix . '</span>';
+		}
+
+		echo '<textarea class="tpl-preview-1" id="' . esc_attr( $this->form_ref() ) . '" name="' . esc_attr( $this->form_ref() ) . '" rows="' . esc_attr( $this->size ) . '">'
 		. $value
 		. '</textarea>';
+
+		if ( $this->suffix ) {
+			echo '<span class="tpl-datatype-suffix tpl-preview-2">' . $this->suffix . '</span>';
+		}
+
+		echo '</div>';
+
+	}
+
+
+	// Container end of the form field
+	public function form_field_after () {
+
+		$path_i = $this->get_level() * 2 + 1;
+
+		if ( !empty( $this->default ) ) {
+			echo ' <div class="tpl-default-container">
+				<i class="tpl-default-value">(';
+
+			echo __( 'default:', 'themple' ) . ' <pre>' . esc_html( $this->default ) . '</pre>';
+
+			echo ')</i>
+			</div>';
+		}
+
+		echo '</div>';		// .tpl-field-inner
+
+		if ( $this->repeat !== false ) {
+			$this->path[$path_i]++;
+		}
 
 		echo '</div>';
 
@@ -49,7 +83,7 @@ class TPL_Textarea extends TPL_Data_Type {
 			if ( is_array( $values ) ) {
 				echo '<ul>';
 				foreach ( $values as $value ) {
-					echo '<li>' . $value . '</li>';
+					echo '<li>' . tpl_kses( $value ) . '</li>';
 				}
 				echo '</ul>';
 				return;
@@ -57,10 +91,9 @@ class TPL_Textarea extends TPL_Data_Type {
 
 		}
 
-		echo '<p>' . $this->get_value( $args ) . '</p>';
+		echo '<p>' . tpl_kses( $this->get_value( $args ) ) . '</p>';
 
 	}
-
 
 
 }

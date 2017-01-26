@@ -1,5 +1,6 @@
 <?php
 get_header();
+
 $layout = tpl_get_layout();
 if ( $layout == 'full' ) {
 	$columns = 12;
@@ -9,19 +10,24 @@ else {
 }
 ?>
 
-<div id="contentWrapper" class="row">
-    <main id="content" class="blog content column-<?php echo $columns; ?>">
+<div id="contentWrapper">
 
-		<?php get_template_part ( 'inc/loops/loop', 'blog' ); ?>
+	<div class="tpl-grid-row">
 
-		<aside class="pagination">
-			<?php next_posts_link( tpl_get_value ( 'olderposts' ) ); ?>
-			<?php previous_posts_link( tpl_get_value ( 'newerposts' ) ); ?>
-		</aside>
+	    <main id="content" class="blog content tpl-grid-column-<?php echo $columns ?>">
 
-    </main><!-- content -->
+			<?php get_template_part ( 'inc/loops/loop', 'blog' ); ?>
 
-	<?php get_sidebar(); ?>
+			<aside class="pagination">
+				<?php next_posts_link( tpl_get_value ( 'olderposts' ) ); ?>
+				<?php previous_posts_link( tpl_get_value ( 'newerposts' ) ); ?>
+			</aside>
+
+	    </main><!-- content -->
+
+		<?php get_sidebar(); ?>
+
+	</div>
 
 </div><!-- contentWrapper -->
 

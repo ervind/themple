@@ -1,0 +1,84 @@
+// 800-footer.less - The footer-specific styles
+
+
+
+// Main footer
+footer {
+	background-color: #e8e8e8;
+	min-height: 20px;
+	clear: both;
+	padding-top: 30px;
+	padding-bottom: 90px;
+	line-height: 1.5em;
+
+	p {
+		line-height: 1.5em;
+	}
+
+	.tpl-wrapper {
+		display: table;
+	}
+
+	.tpl-grid-column, [class*="tpl-grid-column-"] {
+		border-right: 1px solid @acolor;
+		display: table-cell;
+		padding-left: 20px;
+		padding-right: 20px;
+		float: none;
+
+		&:last-child {
+			border-right: none;
+		}
+	}
+
+	.widget {
+		margin-bottom: 42px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		ul li {
+			margin-bottom: .6em;
+
+			ul {
+				margin-top: .6em;
+			}
+		}
+
+		.searchform {
+			margin: 0px;
+		}
+	}
+
+	.widgettitle {
+		font-size: 14px;
+		font-weight: bold;
+		color: #000;
+		margin-bottom: 25px;
+		margin-top: .6em;
+	}
+
+	p {
+		margin-bottom: 1.5em;
+	}
+
+	.simple_tweet_widget {
+		img {
+			margin-right: 14px;
+		}
+	}
+}
+
+// The copyright line
+.copyright {
+	background-color: darken(@acolor, 30%);
+	padding-top: 1em;
+	padding-bottom: 1em;
+	color: #fff;
+	text-align: center;
+
+	P {
+		margin: 0;
+	}
+}

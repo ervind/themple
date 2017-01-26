@@ -1,16 +1,21 @@
 // Grid.less - the Grid system for Themple Starter
 
-.row:before,
-.row:after {
+.tpl-grid-row {
+	max-width: @grid_max_width;
+	margin: 0 auto;
+}
+
+.tpl-grid-row:before,
+.tpl-grid-row:after {
     content: "";
     display: table;
 }
 
-.row:after {
+.tpl-grid-row:after {
     clear: both;
 }
 
-.column, [class*="column-"] {
+.tpl-grid-column, [class*="tpl-grid-column-"] {
     position: relative;
     float: left;
     padding-left: 10px;
@@ -24,7 +29,7 @@
 }
 
 .generate-columns( @n, @i: 1 ) when ( @i =< @n ) {
-    .column-@{i} {
+    .tpl-grid-column-@{i} {
         width: ( @i * 100% / @n );
 
 		.input-elements( @i );

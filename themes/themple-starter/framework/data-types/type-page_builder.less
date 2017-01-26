@@ -1,6 +1,6 @@
 // Page Builder special styles
 
-.columnset-structure {
+.tpl-columnset-structure {
 	display: inline-block;
 	width: 60px;
 	height: 20px;
@@ -12,8 +12,10 @@
 		margin-top: -2px;
 	}
 
-	.columnset-structure-part {
-		display: inline-block;
+	.tpl-columnset-structure-part {
+		display: flex;
+		flex-wrap: wrap;
+		float: left;
 		box-sizing: border-box;
 		vertical-align: top;
 		height: 100%;
@@ -44,6 +46,10 @@
 		&.csp-3_4 {
 			width: 75%;
 		}
+	}
+
+	.tpl-columnset-structure-darker {
+		background-color: #bbb;
 	}
 
 }

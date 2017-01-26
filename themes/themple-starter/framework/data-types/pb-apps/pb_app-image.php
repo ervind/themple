@@ -24,20 +24,13 @@ class TPL_PB_Image {
 				"description"	=> __( 'Upload or select previously uploaded image here', 'themple' ),
 				"type"			=> 'image',
 				"size"			=> 'full',
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'image',
-					),
-				),
 			),
 		);
 
 	}
 
 
+	// Frontend output
 	public function frontend_value( $values = array() ) {
 
 		$result = '';

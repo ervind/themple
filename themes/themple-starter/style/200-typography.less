@@ -1,0 +1,100 @@
+// 200-typography.less - Typography styles, used in the front end and in the backend TinyMCE editor
+
+
+
+body {
+	font: @basic_font__weight @basic_font__size @basic_font__family;
+	color: @basic_font__color;
+}
+
+a {
+	color: @link_color;
+	text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: @h1color;
+	font-weight: bold;
+
+	a {
+		color: @h1color;
+		text-decoration: none;
+	}
+}
+
+h1 {
+	font-size: 32px;
+	margin: 32px 0 28px;
+}
+
+h2 {
+	font-size: 24px;
+	margin: 32px 0 28px;
+}
+
+h3 {
+	font-size: 20px;
+	margin: 32px 0 28px;
+}
+
+h4 {
+	font-size: 18px;
+	margin: 32px 0 28px;
+}
+
+h5 {
+	font-size: 16px;
+	margin: 32px 0 28px;
+}
+
+h6 {
+	font-size: 16px;
+	color: @basic_font__color;
+	margin: 32px 0 28px;
+}
+
+hr {
+	border-top: 1px solid @acolor;
+	margin-top: 80px;
+	margin-bottom: 80px;
+}
+
+p {
+	line-height: 1.8em;
+	margin-bottom: 1.8em;
+}
+
+blockquote {
+	font-style: italic;
+	padding-left: 72px;
+	padding-right: 72px;
+}
+
+kbd, code {
+	background-color: #e8e8e8;
+	font-family: monospace;
+	padding: 2px 4px;
+}
+
+var {
+	font-family: monospace;
+	font-weight: bold;
+}
+
+q {
+	font-style: italic;
+}
+
+address {
+	margin-bottom: 1.8em;
+}
+
+pre {
+	font-family: monospace;
+	background-color: #e8e8e8;
+	display: block;
+	padding: 20px;
+	margin-bottom: 1.8em;
+	line-height: 1.8em;
+	white-space: pre-wrap;
+}

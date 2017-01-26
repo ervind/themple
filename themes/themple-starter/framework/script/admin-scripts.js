@@ -1,4 +1,4 @@
-// Media uploader script
+// Themple Framework admin scripts
 jQuery(document).ready(function($) {
 
 	"use strict";
@@ -12,10 +12,13 @@ TABLE OF CONTENTS
 	2.1 Image
 	2.2 Color
 	2.3 Select
+	2.4 TinyMCE
+	2.5 Date
+	2.6 Boolean
 3. Scripts for repeater fields
+	3.1 Repeater Previews
 4. Common settings
 	4.1 Tabs in the backend
-	4.2 Hover messages on icons
 5. Conditional settings
 6. Page Builder settings
 
@@ -36,7 +39,7 @@ TABLE OF CONTENTS
 
 	// Needed for the Select data type
 	// Basic settings for all types of dropdowns
-	var basic_select2_settings = {
+	Themple_Admin.basic_select2_settings = {
 		escapeMarkup: function(m) {
 			return m;
 		},
@@ -46,24 +49,31 @@ TABLE OF CONTENTS
 	// General settings for simple select dropdowns
 	var select2_settings = $.extend( {
 		minimumResultsForSearch: 10,
-	}, basic_select2_settings );
+	}, Themple_Admin.basic_select2_settings );
 
 	// Font Awesome dropdown settings
 	var fa_icon_settings = $.extend( {
 		templateSelection: tpl_fa_icon_template,
 		templateResult: tpl_fa_icon_template,
+		formatSelection: tpl_fa_icon_template,
+		formatResult: tpl_fa_icon_template,
 		minimumResultsForSearch: 10,
-	}, basic_select2_settings );
+	}, Themple_Admin.basic_select2_settings );
 
 	// Page Builder columnset dropdown settings
 	var pb_columnset_settings = $.extend( {
 		templateSelection: tpl_pb_columnset_template,
 		templateResult: tpl_pb_columnset_template,
+		formatSelection: tpl_pb_columnset_template,
+		formatResult: tpl_pb_columnset_template,
 		minimumResultsForSearch: Infinity,
-	}, basic_select2_settings );
+	}, Themple_Admin.basic_select2_settings );
 
 	// Do an initial row arrangement, just in case...
 	tpl_arrange_rows();
+
+	// Remove the dummy editor from the TO/FO DOM after initialization
+	$('#wp-dummy_editor-wrap').remove();
 
 
 
@@ -79,10 +89,10 @@ TABLE OF CONTENTS
 */
 
 	// Main uploader popup handler
-    $('body').on('click', '.uploader .button, .uploader img', function(e) {
+    $('body').on('click', '.tpl-uploader .button, .tpl-uploader .tpl-uploaded-image', function(e) {
 
         e.preventDefault();
-		var imgurl = $(this).parent().find('.uploaded-image');
+		var imgurl = $(this).parent().find('.tpl-uploaded-image');
 		var current_item = imgurl.closest('.tpl-field');
 
         //Extend the wp.media object
@@ -97,11 +107,16 @@ TABLE OF CONTENTS
         //When a file is selected, grab the URL and set it as the text field's value
         custom_uploader.on('select', function() {
             var attachment = custom_uploader.state().get('selection').first().toJSON();
-			imgurl.attr('src', attachment.sizes.thumbnail.url);
+			if ( typeof attachment.sizes.thumbnail !== 'undefined' ) {
+				imgurl.attr('src', attachment.sizes.thumbnail.url);
+			}
+			else {
+				imgurl.attr('src', attachment.sizes.full.url);
+			}
 			imgurl.show();
-			current_item.find('.img_id').val(attachment.id).trigger('change');
-			current_item.find('.placeholder').hide();
-			current_item.find('.closer').show();
+			current_item.find('.tpl-img_id').val(attachment.id).trigger('change');
+			current_item.find('.tpl-img-placeholder').hide();
+			current_item.find('.tpl-closer').show();
         });
 
         //Open the uploader dialog
@@ -111,14 +126,14 @@ TABLE OF CONTENTS
 
 
 	// Clear the uploaded picture with the "X" icon
-	$('body').on('click', '.uploader .closer', function(){
+	$('body').on('click', '.tpl-uploader .tpl-closer', function(){
 
-		var imgurl = $(this).parent().find('.uploaded-image');
+		var imgurl = $(this).parent().find('.tpl-uploaded-image');
 		var current_item = imgurl.closest('.tpl-field');
 		imgurl.attr('src', '');
-		current_item.find('.placeholder').show();
-        current_item.find('.uploaded-image').hide();
-		$(this).closest('.tpl-field').find('.img_id').val('').trigger('change');
+		current_item.find('.tpl-img-placeholder').show();
+        current_item.find('.tpl-uploaded-image').hide();
+		$(this).closest('.tpl-field').find('.tpl-img_id').val('').trigger('change');
 		$(this).hide();
 
 	});
@@ -133,6 +148,7 @@ TABLE OF CONTENTS
 
 */
 
+	// Common color picker settings used by all instances
 	var color_picker_settings = {
 		width : 258,
 		change : function(event,ui){
@@ -158,25 +174,94 @@ TABLE OF CONTENTS
 */
 
 	// Select scripts
-	$('#wpcontent .tpl-field.select').not('.font_awesome').find('select').select2( select2_settings );
-	$('#wpcontent .tpl-field.select.font_awesome select').select2( fa_icon_settings );
-	$('#wpcontent .tpl-field.select.tpl-columnset select').select2( pb_columnset_settings );
-
-	function tpl_fa_icon_template(data, container) {
-		return '<i class="fa fa-' + data.id + '"></i> ' + data.text;
+	if ( $('.tpl-dt-select').length > 0 ) {
+		$('#wpcontent .tpl-field.tpl-dt-select').not('.tpl-dt-font_awesome').find('select').select2( select2_settings );
+		$('#wpcontent .tpl-field.tpl-dt-select.tpl-dt-font_awesome select').select2( fa_icon_settings );
+		$('#wpcontent .tpl-field.tpl-dt-select.tpl-columnset select').select2( pb_columnset_settings );
 	}
 
-	function tpl_pb_columnset_template(data, container) {
-		var structure = '<span class="columnset-structure">';
+	// Font Awesome select field template
+	function tpl_fa_icon_template(data) {
+		return '<i class="fa fa-lg fa-fw fa-' + data.id + '"></i> ' + data.text;
+	}
+
+	// Add columnset illustration to the columnset selector
+	function tpl_pb_columnset_template(data) {
+		var structure = '<span class="tpl-preview-3"><span class="tpl-columnset-structure">';
 		if ( data.id != undefined ) {
 			var columnset = data.id.split('-');
 			for ( var i = 0; i < columnset.length; i++ ) {
-				structure += '<span class="columnset-structure-part csp-'+ columnset[i].replace('/','_') +'"></span>';
+				structure += '<span class="tpl-columnset-structure-part csp-'+ columnset[i].replace('/','_') +'"></span>';
 			}
 		}
-		structure += '</span>';
+		structure += '</span></span>';
 		return structure + data.text;
 	}
+
+
+
+
+
+/*
+
+	2.4 TINYMCE DATA TYPE
+	---------------------
+
+*/
+
+	// Settings for the TinyMCE editor
+	function tpl_tinymce_init() {
+		$( '#wpcontent .tpl-field.tpl-dt-tinymce' ).not( $('#wpcontent .tpl-field.tpl-dt-tinymce.tpl-admin-hide') ).each(function(){
+			var id = $(this).find('textarea').attr('id');
+			tinyMCE.execCommand( 'mceAddEditor', false, id );
+		});
+		$( '#wpcontent .tpl-field.tpl-dt-tinymce.tpl-admin-hide').each(function(){
+			var id = $(this).find('textarea').attr('id');
+			tinyMCE.execCommand( 'mceRemoveEditor', false, id );
+		});
+	}
+
+
+
+
+	/*
+
+		2.5 DATE DATA TYPE
+		------------------
+
+	*/
+
+	// Date picker for the Date type
+	if ($.datepicker !== undefined) {
+		$('#wpcontent .tpl-field.tpl-dt-date input.tpl-date-field').datepicker({
+			dateFormat: 'yy-mm-dd',
+			firstDay: Themple_Admin.date_starts_with
+		});
+	}
+
+
+
+
+	/*
+
+		2.6 BOOLEAN DATA TYPE
+		---------------------
+
+	*/
+
+	// Setting the value for the boolean DT
+	$('#wpcontent').on('click', '.tpl-field.tpl-dt-boolean label', function(){
+		var old_value = parseInt( $('input', this).val() );
+		if ( old_value == 1 ) {
+			var new_value = 0;
+		}
+		if ( old_value == 0 || isNaN( old_value ) ) {
+			var new_value = 1;
+		}
+		$('input', this).val( new_value );
+		$(this).attr('class', 'checked-' + new_value );
+	});
+
 
 
 
@@ -188,26 +273,27 @@ TABLE OF CONTENTS
 
 */
 
+	// Post metaboxes and settings pages use different containers, that's why we need this function
 	function tpl_repeat_set_container( elem ){
 
 		var url = window.location.href;
 
 		// Primary Options page (Theme Options, Framework Options)
-		if ( url.indexOf('themes.php') > -1 ) {
-			if ( elem.parent().prev().hasClass('subitem-repeat-wrapper') ) {
-				var container = elem.parent().prev('.subitem-repeat-wrapper');
+		if ( url.indexOf('themes.php') > -1 || url.indexOf('options-general.php') > -1 ) {
+			if ( elem.parent().prev().hasClass('tpl-subitem-repeat-wrapper') ) {
+				var container = elem.parent().prev('.tpl-subitem-repeat-wrapper');
 			}
 			else {
-				var container = elem.closest('tr').prev().children('.repeater');
+				var container = elem.closest('tr').prev().find('td');
 			}
 		}
 		// Post options branch
-		if ( url.indexOf('post.php') > -1 ) {
-			if ( elem.parent().prev().hasClass('subitem-repeat-wrapper') ) {
-				var container = elem.parent().prev('.subitem-repeat-wrapper');
+		if ( url.indexOf('post.php') > -1 || url.indexOf('post-new.php') > -1 ) {
+			if ( elem.parent().prev().hasClass('tpl-subitem-repeat-wrapper') ) {
+				var container = elem.parent().prev('.tpl-subitem-repeat-wrapper');
 			}
 			else {
-				var container = elem.parent().prev('.meta-option-wrapper');
+				var container = elem.parent().prev('.tpl-meta-option-wrapper');
 			}
 		}
 
@@ -218,25 +304,17 @@ TABLE OF CONTENTS
 
 
 	// Add rows to repeater
-	$('body').on('click', 'button.repeat-add', function(e){
+	$('body').on('click', 'button.tpl-repeat-add', function(e){
 		e.preventDefault();
 		var container = tpl_repeat_set_container( $(this) );
 		tpl_add_row( container, $(this).attr('data-for') );
 	});
 
+	// Adds a repeater row into the container picking the fields connected with data_name
 	function tpl_add_row( container, data_name ) {
 
-		var donor = $("#repeater_bank .tpl-field[data-name='" + data_name + "']").clone();
+		var donor = $("#tpl_repeater_bank .tpl-field[data-name='" + data_name + "']").clone();
 		container.append(donor);
-		var just_added = container.find('.repeat').last();
-
-		// Launch color picker
-		$('#wpcontent .tpl-color-field').wpColorPicker( color_picker_settings );
-
-		// Launch Select2 on select fields
-		$('#wpcontent .tpl-field.select').not('.font_awesome').find('select').select2( select2_settings );
-		$('#wpcontent .tpl-field.select.font_awesome select').select2( fa_icon_settings );
-		$('#wpcontent .tpl-field.select.tpl-columnset select').select2( pb_columnset_settings );
 
 		tpl_repeater_refresh(container);
 
@@ -244,20 +322,54 @@ TABLE OF CONTENTS
 
 		tpl_condition_updater();
 
+		// Launch color picker
+		if ( $('.tpl-dt-color').length > 0 ) {
+			$('#wpcontent .tpl-color-field').wpColorPicker( color_picker_settings );
+		}
+
+		// Launch Select2 on select fields
+		if ( $('.tpl-dt-select').length > 0 ) {
+			$('#wpcontent .tpl-field.tpl-dt-select').not('.tpl-dt-font_awesome').find('select').select2( select2_settings );
+			$('#wpcontent .tpl-field.tpl-dt-select.tpl-dt-font_awesome select').select2( fa_icon_settings );
+			$('#wpcontent .tpl-field.tpl-dt-select.tpl-columnset select').select2( pb_columnset_settings );
+		}
+
+		// Launch date picker
+		if ($.datepicker !== undefined) {
+			$('#wpcontent .tpl-field.tpl-dt-date input.tpl-date-field').datepicker({
+				dateFormat: 'yy-mm-dd',
+				firstDay: Themple_Admin.date_starts_with
+			});
+		}
+
+		tpl_tinymce_init();
+		tpl_set_repeater_headers();
+		tpl_highlight_pb_column();
+
 	}
 
 
 	// Remove rows from repeater
-	$('body').on('click', '.remover', function(){
+	$('body').on('click', '.tpl-remover', function(){
 		tpl_remove_row( $(this) );
 	});
 
-	function tpl_remove_row( elem ) {
+	// elem is the remover icon, then this function finds what to remove
+	function tpl_remove_row( elem, confirm_override ) {
 
-		var container = $(elem).closest('.repeater');
+		if ( typeof confirm_override == "undefined" ) {
+			confirm_override = false;
+		}
+
+		var container = $(elem).closest('.tpl-repeater');
 
 		if ( Themple_Admin.remover_confirm == 'yes' ) {
-			var remove = confirm( Themple_Admin.remover_confirm_text );
+			if ( confirm_override == false ) {
+				var remove = confirm( Themple_Admin.remover_confirm_text );
+			}
+			else {
+				var remove = true;
+			}
 		}
 		else {
 			var remove = true;
@@ -265,9 +377,8 @@ TABLE OF CONTENTS
 
 		if ( remove == true ) {
 			$(elem).closest('.tpl-field').remove();
-			container.each(function(){
-				tpl_repeater_refresh($(elem));
-			});
+			tpl_repeater_refresh(container);
+			tpl_highlight_pb_column();
 		}
 
 	};
@@ -275,18 +386,30 @@ TABLE OF CONTENTS
 
 	// Arrange rows
 	function tpl_arrange_rows(){
-		$('.repeat').each(function(){
-			$(this).parent().addClass('repeater');
+		$('.tpl-repeat').each(function(){
+			$(this).parent().addClass('tpl-repeater');
 		});
-		$('.repeater').sortable({
-			handle : '.arranger',
-			update : function( event, ui ) {
-				tpl_repeater_refresh( $(this) );
-			},
-			start : function( event, ui ){
-				ui.placeholder.height( ui.item.height() );
-			}
-		});
+		if ( typeof $.ui.sortable != 'undefined' ) {
+			$('.tpl-repeater').sortable({
+				handle : '.tpl-arranger',
+				update : function( event, ui ) {
+					tpl_repeater_refresh( $(this) );
+				},
+				start : function( event, ui ){
+					ui.placeholder.height( ui.item.height() );
+
+					ui.item.closest('.tpl-repeater').find('.tpl-field.tpl-dt-tinymce textarea').each(function(){
+						var id = $(this).attr('id');
+						tinyMCE.execCommand('mceRemoveEditor', false, id);
+					});
+
+				},
+				stop: function(event, ui) { // re-initialize TinyMCE when sort is completed
+					tpl_tinymce_init();
+					tpl_highlight_pb_column();
+				}
+			});
+		}
 	}
 
 
@@ -332,6 +455,7 @@ TABLE OF CONTENTS
 			}
 
 			$(this).attr('data-instance', i[level]);
+			$(this).find('.tpl-header-title-instance').html('(#'+i[level]+')');
 			if ( level == 0 ) {
 				for (var j=1; j<i.length; j++) {
 					i[j] = 0;
@@ -339,13 +463,13 @@ TABLE OF CONTENTS
 			}
 
 			$('input, select, textarea', this).each(function(){
-				var oldname = $(this).attr('name');
-				if ( typeof(oldname) !== 'undefined' ) {
+				var oldname = $(this).attr('id');
+				if ( typeof oldname !== 'undefined' ) {
 					var oldname_array = oldname.split('[');
 					var newname = oldname_array[0];
 					for (var j=0; j<name_array.length; j++) {
-						if ( j < name_array.length - 1 ) {
-							if ( url.indexOf('post.php') > -1 && j == 0 ) {
+						if ( j < name_array.length - 1 || name_array.length == 1 ) {
+							if ( ( url.indexOf('post.php') > -1 || url.indexOf('post-new.php') > -1 ) && j == 0 ) {
 								newname += '[' + i[j] + ']';
 							}
 							else {
@@ -353,7 +477,7 @@ TABLE OF CONTENTS
 							}
 						}
 						else {
-							if ( $(this).closest('.tpl-field').hasClass('repeat') ) {
+							if ( $(this).closest('.tpl-field').hasClass('tpl-repeat') ) {
 								newname += '[' + name_array[j] + '][' + i[j] + ']';
 							}
 							else {
@@ -364,22 +488,223 @@ TABLE OF CONTENTS
 
 					$(this).attr('name', newname);
 					$(this).attr('id', newname);
-					$(this).closest('.tpl-field').prev('label').each(function(){
-						$(this).attr('for', newname);
-					});
+					$(this).closest('.tpl-field').prevAll('label').attr('for', newname);
+
 				}
 			});
-
-			if ( container.find('.repeat').first().hasClass('image') ) {
-				var base_name = $('.button', this).attr('name');
-				base_name = base_name.replace('_button', '');
-				var ins_name = base_name + '_' + i[level];
-				$('.img_id', this).attr('id', ins_name);
-			}
 
 		});
 
 	}
+
+
+	// Show / hide block
+	$('body').on('click', '.tpl-toggle-close', function(){
+		$(this).closest('.tpl-repeat').children('.tpl-field-inner').addClass('tpl-admin-hide');
+		$(this).closest('.tpl-repeat-header').addClass('tpl-repeat-header-closed');
+		$(this).attr('title', Themple_Admin.Repeat_Maximize);
+		$(this).removeClass('tpl-toggle-close');
+		$(this).addClass('tpl-toggle-open');
+	});
+	$('body').on('click', '.tpl-toggle-open', function(){
+		$(this).closest('.tpl-repeat').children('.tpl-field-inner').removeClass('tpl-admin-hide');
+		$(this).closest('.tpl-repeat-header').removeClass('tpl-repeat-header-closed');
+		$(this).attr('title', Themple_Admin.Repeat_Minimize);
+		$(this).addClass('tpl-toggle-close');
+		$(this).removeClass('tpl-toggle-open');
+	});
+
+
+
+
+/*
+
+		3.1 REPEATER PREVIEWS
+		---------------------
+
+*/
+
+	// Gets the Data Type class (tpl-dt-xxx) out of the .tpl-field element
+	function tpl_get_type_class(tpl_field){
+		var class_names = tpl_field.attr('class').split(/\s+/);
+		var ret = '';
+		$.each(class_names, function(index, item) {
+			if ( item.indexOf( "tpl-dt-" ) == 0 && item != 'tpl-dt-combined' ) {
+				ret = item;
+			}
+		});
+		return ret;
+	}
+
+	// Get the preview value of an element
+	function tpl_get_preview_value(tpl_preview_field){
+		var pure_preview = '';
+
+		if ( typeof tpl_preview_field.attr('data-preview-value') !== 'undefined' ) {
+			pure_preview = tpl_preview_field.attr('data-preview-value');
+		}
+		else {
+			// console.log(tpl_preview_field);
+			var tag = tpl_preview_field.prop("tagName").toLowerCase();
+			switch (tag) {
+				case 'select':
+				if ( tpl_preview_field.closest('.tpl-dt-select').is('.tpl-select-preview-key') ) {
+					pure_preview = tpl_preview_field.val();
+				}
+				else {
+					pure_preview = tpl_preview_field.closest('.tpl-dt-select').find('.select2-selection__rendered').html();
+				}
+				break;
+				case 'span':
+				pure_preview = tpl_preview_field.html();
+				break;
+				case 'textarea':
+				pure_preview = tpl_preview_field.html();
+				break;
+				case 'img':
+				pure_preview = tpl_preview_field.attr('src');
+				break;
+				default:
+				pure_preview = tpl_preview_field.val();
+			}
+		}
+
+		return pure_preview;
+
+	}
+
+
+	// Get the parent data name
+	function tpl_get_data_name_parent(data_name){
+		data_name = data_name.split('/');
+		var res = '';
+		for (var i=0;i<data_name.length-1;i++){
+			res += data_name[i];
+			if (i<data_name.length-2){
+				res += '/';
+			}
+		}
+		return res;
+	}
+
+
+	$(window).load(function(){
+		tpl_set_repeater_headers();
+	});
+
+	function tpl_set_repeater_headers(){
+
+		$('.tpl-repeat').each(function(){
+			var preview = '';
+			var dt_class= '';
+			var data_name = '';
+			var orig_repeat = this;
+
+			// Setting up the class names in case we have to use preview templates
+			if ( typeof Themple_Admin[$(this).attr('data-name')+'_preview-template'] !== 'undefined' ) {
+				dt_class = $(this).attr('data-name') + '_preview-template';
+			}
+			else {
+				dt_class = tpl_get_type_class($(this)) + '_preview-template';
+			}
+
+			// Single field
+			if ( !$(this).is('.tpl-dt-combined') ) {
+
+				// If have a template, use it
+				if ( typeof Themple_Admin[dt_class] !== 'undefined' ) {
+					preview = Themple_Admin[dt_class];
+					$('*[class*=tpl-preview-]', this).each(function(index){
+						preview = preview.replace( '[tpl-preview-'+index+']', tpl_get_preview_value($(this)) );
+					});
+				}
+
+				// Else put the values after each other
+				else {
+					$('*[class*=tpl-preview-]', this).each(function(index){
+						preview += tpl_get_preview_value($(this));
+					});
+				}
+			}
+
+
+			// Combined field
+			else {
+
+				// If the combined field has a main template, use it
+				if ( typeof Themple_Admin[dt_class] !== 'undefined' ) {
+					preview = Themple_Admin[dt_class];
+					var to_change = preview.match(/\[.*?tpl-preview-\w*\]/g);
+					$('.tpl-field', this).each(function(){
+						data_name = $(this).attr('data-name');
+						var ch_arr = data_name.split('/');
+						var cfield = this;
+						$.each(to_change, function(i, item){
+							var ii = item.split('/tpl-preview-');
+							ii[0] = ch_arr[0] + '/' + ii[0].substring(1);
+							ii[1] = ii[1].slice(0,-1);
+							$('*[class*=tpl-preview-]', cfield).each(function(index){
+								if ( ii[0] == data_name && $(this).hasClass('tpl-preview-'+ii[1]) ) {
+									if (
+										tpl_get_data_name_parent(data_name).search('/') > -1
+										&& $('[data-name="'+tpl_get_data_name_parent(data_name)+'"]').is('.tpl-repeat')
+										&& $(this).closest('[data-name="'+tpl_get_data_name_parent(data_name)+'"]').parent().find('[data-name="'+tpl_get_data_name_parent(data_name)+'"]').length > parseInt($(this).closest('[data-name="'+tpl_get_data_name_parent(data_name)+'"]').attr('data-instance')) + 1
+										&& parseInt($(cfield).attr('data-level')) < 3
+										&& $(orig_repeat).is('.tpl-preview-multi')
+									) {
+										preview = preview.replace( item, tpl_get_preview_value($(this)) ) + ' / '+item;
+									}
+									else {
+										preview = preview.replace( item, tpl_get_preview_value($(this)) );
+									}
+								}
+							});
+						});
+					});
+					// Clean up the remaining shortcodes
+					$.each(to_change, function(i, item){
+						preview = preview.replace( item, '' );
+					});
+				}
+
+				// If not, add the subitems' templates one-by-one
+				else {
+					var l = $('.tpl-field', this).length;
+					$('.tpl-field', this).each(function(i){
+						data_name = $(this).attr('data-name');
+						dt_class = tpl_get_type_class($(this)) + '_preview-template';
+
+						// If have a template, use it
+						if ( typeof Themple_Admin[dt_class] !== 'undefined' ) {
+							preview += Themple_Admin[dt_class];
+							$('*[class*=tpl-preview-]', this).each(function(index){
+								preview = preview.replace( '[tpl-preview-'+index+']', tpl_get_preview_value($(this)) );
+							});
+
+						}
+
+						// Else put the values after each other
+						else {
+							$('*[class*=tpl-preview-]', this).each(function(index){
+								preview += tpl_get_preview_value($(this));
+							});
+						}
+
+						if ( i < (l-1) ) {
+							preview += ' / ';
+						}
+
+					});
+				}
+			}
+
+			// Finally, setting up the repeater header
+			$('.tpl-header-title-preview', this).html(preview);
+
+		});
+
+	}
+
 
 
 
@@ -398,7 +723,7 @@ TABLE OF CONTENTS
 	$('#tpl-settings-tabs').tabs();
 
 	// Set the active tab if present in sessionStorage
-	if (typeof(Storage) !== "undefined") {
+	if (typeof Storage !== "undefined") {
 		var tabName = $('#tpl-settings-tabs').attr('data-store');
 		var tabValue = sessionStorage.getItem(tabName);
 		if (typeof(tabValue) !== "undefined") {
@@ -409,7 +734,7 @@ TABLE OF CONTENTS
 	// Save the active tab to sessionStorage for future use
 	$('#tpl-settings-tabs .nav-tab').click(function(){
 
-		if (typeof(Storage) !== "undefined") {
+		if (typeof Storage !== "undefined") {
 			var tabName = $('#tpl-settings-tabs').attr('data-store');
 			var tabValue = $('#tpl-settings-tabs').tabs('option', 'active');
 		    sessionStorage.setItem(tabName, tabValue);
@@ -417,28 +742,6 @@ TABLE OF CONTENTS
 
 	});
 
-
-
-
-/*
-
-	4.2 HOVER MESSAGES ON ICONS
-	---------------------------
-
-*/
-
-	// Hover messages for icons
-	$('body').on('mouseover', '.admin-icon', function(){
-
-		$('.hovermsg',this).show();
-
-	});
-
-	$('body').on('mouseout', '.admin-icon', function(){
-
-		$('.hovermsg',this).hide();
-
-	});
 
 
 
@@ -491,23 +794,23 @@ TABLE OF CONTENTS
 	function tpl_condition_updater() {
 		var url = window.location.href;
 
-		$('#wpcontent .tpl-field, #wpcontent .subitem-repeat-wrapper, #wpcontent .meta-option').each(function(){
+		$('#wpcontent .tpl-field, #wpcontent .tpl-subitem-repeat-wrapper, #wpcontent .tpl-meta-option').each(function(){
 
 			// Primary Options page (Theme Options, Framework Options)
-			if ( url.indexOf('themes.php') > -1 ) {
+			if ( url.indexOf('themes.php') > -1 || url.indexOf('options-general.php') > -1 ) {
 				var section = tpl_get_url_param('page', url);
 				var container = 'tr';
 			}
 			// Post options branch
-			if ( url.indexOf('post.php') > -1 ) {
+			if ( url.indexOf('post.php') > -1 || url.indexOf('post-new.php') > -1 ) {
 				var section = '';
-				var container = '.meta-option';
+				var container = '.tpl-meta-option';
 			}
 
 			var option_name = $(this).attr('data-name');
 			var data_connected = $(this).attr('data-connected');
 
-			if ( $(this).hasClass('subitem-repeat-wrapper') || $(this).hasClass('meta-option') ) {
+			if ( $(this).hasClass('tpl-subitem-repeat-wrapper') || $(this).hasClass('tpl-meta-option') ) {
 				option_name = data_connected;
 			}
 
@@ -527,7 +830,7 @@ TABLE OF CONTENTS
 				for ( ci = 0; ci < Olength; ci++ ) {
 
 
-					if ( typeof( Themple_Admin.Conditions[option_name][ci] ) !== 'undefined' ) {
+					if ( typeof Themple_Admin.Conditions[option_name][ci] !== 'undefined' ) {
 
 						var condition_type = Themple_Admin.Conditions[option_name][ci]["type"];
 						var condition_name = Themple_Admin.Conditions[option_name][ci]["name"];
@@ -588,11 +891,11 @@ TABLE OF CONTENTS
 							}
 
 							base_id = '#' + section;
-							if ( url.indexOf('post.php') > -1 ) {
+							if ( url.indexOf('post.php') > -1 || url.indexOf('post-new.php') > -1 ) {
 								base_id += '_' + c_array[0];
 							}
 							for ( var l = 0; l < c_array.length; l++ ) {
-								if ( url.indexOf('post.php') > -1 ) {
+								if ( url.indexOf('post.php') > -1 || url.indexOf('post-new.php') > -1 ) {
 									if ( l > 0 ) {
 										base_id += '\\[' + c_array[l] + '\\]';
 									}
@@ -755,17 +1058,18 @@ TABLE OF CONTENTS
 
 				// Now show or hide the option based on the (met) variable
 				data_connected = data_connected.replace('/', '\/');
-				$(this).closest(container).attr('data-connected', data_connected);
 
+				// Showing elements
 				if ( met == true ) {
 
-					if ( typeof( data_connected ) !== "undefined" ) {
+					if ( typeof data_connected !== "undefined" ) {
 						$(this).parent().parent().parent().find('[data-connected="'+ data_connected +'"]').removeClass('tpl-admin-hide');
-						if ( container == 'tr' ) {
-							$(this).closest(container).next(container).has('.optiondesc').removeClass('tpl-admin-hide');
+						if ( container == 'tr' && $(this).attr('data-level') == '0' ) {
+							$(this).closest(container).next(container).has('.tpl-optiondesc').removeClass('tpl-admin-hide');
+							$(this).closest(container).removeClass('tpl-admin-hide');
 						}
 						else {
-							$(this).closest(container).next('p.optiondesc').removeClass('tpl-admin-hide');
+							$(this).closest(container).next('p.tpl-optiondesc').removeClass('tpl-admin-hide');
 						}
 						$(this).find('input, select, textarea').each(function(){
 							$(this).attr('name', $(this).attr('id'));
@@ -773,17 +1077,25 @@ TABLE OF CONTENTS
 					}
 
 				}
+
+				// Hiding elements
 				else {
 
-					if ( typeof( data_connected ) !== "undefined" ) {
+					if ( typeof data_connected !== "undefined" ) {
 						$(this).parent().parent().parent().find('[data-connected="'+ data_connected +'"]').addClass('tpl-admin-hide');
-						if ( container == 'tr' ) {
-							$(this).closest(container).next(container).has('.optiondesc').addClass('tpl-admin-hide');
+						if ( container == 'tr' && $(this).attr('data-level') == '0' ) {
+							$(this).closest(container).next(container).has('.tpl-optiondesc').addClass('tpl-admin-hide');
+							$(this).closest(container).addClass('tpl-admin-hide');
 						}
 						else {
-							$(this).closest(container).next('p.optiondesc').addClass('tpl-admin-hide');
+							$(this).closest(container).next('p.tpl-optiondesc').addClass('tpl-admin-hide');
 						}
 						$(this).find('input, select, textarea').removeAttr('name');
+
+						$(this).closest(container).find('.tpl-field.tpl-dt-tinymce.tpl-admin-hide textarea').each(function(){
+							var editor_id = $(this).attr('id');
+							tinymce.execCommand('mceRemoveEditor', false, editor_id);
+						});
 					}
 
 				}
@@ -794,7 +1106,7 @@ TABLE OF CONTENTS
 
 		$('.postbox').each(function(){
 			var meta_hide = [];
-			$('.meta-option', this).each(function(){
+			$('.tpl-meta-option', this).each(function(){
 				if ( $(this).hasClass('tpl-admin-hide') ) {
 					meta_hide.push( true );
 				}
@@ -814,13 +1126,16 @@ TABLE OF CONTENTS
 	}
 
 	tpl_condition_updater();
+	tpl_tinymce_init();
 
 	$('body').on('change', 'select', function(){
 		tpl_condition_updater();
+		tpl_set_repeater_headers();
 	});
 
 	$('body').on('keyup', 'input, textarea', function(){
 		tpl_condition_updater();
+		tpl_set_repeater_headers();
 	});
 
 
@@ -847,11 +1162,11 @@ TABLE OF CONTENTS
 
 		// Remove branch
 		if ( columnset.length < old_col_no ) {
-			Themple_Admin.pb_fewer_instances = Themple_Admin.pb_fewer_instances.replace( '##N##', old_col_no - columnset.length );
+			var remove_confirm_msg = Themple_Admin.pb_fewer_instances.replace( '##N##', old_col_no - columnset.length );
 
 			// Do we need to confirm the remove command? (can be set up in Framework Options)
 			if ( Themple_Admin.pb_fewer_confirm == 'yes' ) {
-				var remove = confirm( Themple_Admin.pb_fewer_instances );
+				var remove = confirm( remove_confirm_msg );
 			}
 			// If not, the green light is the default for deletion
 			else {
@@ -860,7 +1175,7 @@ TABLE OF CONTENTS
 			// Now removing the rows
 			if ( remove == true ) {
 				for ( var i = old_col_no; i >= columnset.length; i-- ) {
-					tpl_remove_row( $(this).closest('.tpl-field').parent().find('.tpl-pb-apps[data-instance="'+ i +'"]') );
+					tpl_remove_row( $(this).closest('.tpl-field').parent().find('.tpl-pb-apps[data-instance="'+ i +'"]'), true );
 				}
 			}
 			// If cancel was pressed, make sure that we set Select2 to the previous value
@@ -873,13 +1188,49 @@ TABLE OF CONTENTS
 		else if ( columnset.length > old_col_no ) {
 
 			for ( var i = old_col_no + 1; i <= columnset.length; i++ ) {
-				tpl_add_row( $(this).closest('.tpl-field').parent().find('.tpl-pb-apps').closest('.subitem-repeat-wrapper'), $(this).closest('.tpl-field').parent().find('.tpl-pb-apps').first().attr('data-name') );
+				tpl_add_row( $(this).closest('.tpl-field').parent().find('.tpl-pb-apps').closest('.tpl-subitem-repeat-wrapper'), $(this).closest('.tpl-field').parent().find('.tpl-pb-apps').first().attr('data-name') );
 			}
 
 		}
 
 	});
 
+	$('body').on('select2:select', '.tpl-app_type select', function(){
+		tpl_tinymce_init();
+	});
+
+	function tpl_highlight_pb_column() {
+
+		if ( $( '.tpl-dt-page_builder' ).length ) {
+			$('[data-name="page_builder/apps"] > .tpl-repeat-header > .tpl-header-title > .tpl-header-title-preview').each(function(){
+				$(this).find('.tpl-preview-3').remove();
+				$(this).prepend( $(this).closest('.tpl-dt-page_builder').find('.tpl-columnset .tpl-preview-3').clone() );
+				var z = parseInt( $(this).closest('[data-name="page_builder/apps"]').attr('data-instance') ) + 1;
+				$(this).parent().find('.tpl-columnset-structure .tpl-columnset-structure-part:nth-child('+z+')').addClass('tpl-columnset-structure-darker');
+			});
+		}
+
+	}
+
+	$(window).load(function(){
+		tpl_highlight_pb_column();
+	});
+
+	// Handle settings editor
+	$('.tpl-pb-section-settings').before('<span class="tpl-pb-section-settings-toggle tpl-pb-section-settings-toggle-open tpl-admin-icon" title="'+ Themple_Admin.Show_Settings +'"><span>');
+
+	$('body').on('click', '.tpl-pb-section-settings-toggle-open', function(){
+		$(this).next('.tpl-pb-section-settings').addClass('tpl-pb-section-settings-open');
+		$(this).attr('title', Themple_Admin.Hide_Settings);
+		$(this).addClass('tpl-pb-section-settings-toggle-close');
+		$(this).removeClass('tpl-pb-section-settings-toggle-open');
+	});
+	$('body').on('click', '.tpl-pb-section-settings-toggle-close', function(){
+		$(this).next('.tpl-pb-section-settings').removeClass('tpl-pb-section-settings-open');
+		$(this).attr('title', Themple_Admin.Show_Settings);
+		$(this).removeClass('tpl-pb-section-settings-toggle-close');
+		$(this).addClass('tpl-pb-section-settings-toggle-open');
+	});
 
 
 });

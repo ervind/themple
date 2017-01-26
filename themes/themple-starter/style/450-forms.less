@@ -1,0 +1,238 @@
+// 450-forms.less - basic design for the forms, form elements
+
+
+
+form {
+	.wpcf7-list-item {
+		display: block;
+	}
+}
+
+// Gravity Forms specialities
+.gform_wrapper {
+	.gform_body {
+		ul {
+			list-style: none;
+
+			li {
+				margin-left: 0;
+				margin-bottom: 1.8em;
+			}
+
+			&.gfield_checkbox li, &.gfield_radio li {
+				margin-bottom: 0;
+				margin-left: 0.5em;
+			}
+		}
+	}
+
+	.gform_description {
+		margin-bottom: 1.8em;
+		display: block;
+		font-style: italic;
+	}
+
+	.gfield_description {
+		font-style: italic;
+	}
+}
+
+// General form elements
+fieldset {
+	border: 2px solid #e8e8e8;
+	margin-bottom: 1.8em;
+	padding: 0.5em 2em;
+
+	legend {
+		padding: 0.5em;
+	}
+}
+
+label {
+	cursor: pointer;
+}
+
+input, select, textarea, button, .tpl-button {
+	.tpl-titlebox( 0px, 14px, #ccc );
+	width: 70%;
+	outline: none;
+}
+
+input {
+	line-height: 36px;
+	height: 36px;
+
+	&[type=checkbox], &[type=radio] {
+		width: 20px;
+		height: 20px;
+		opacity: 0;
+		z-index: 999;
+		position: relative;
+		left: 0.25em;
+		top: 0.25em;
+		padding-left: 0;
+		margin-left: 0;
+		cursor: pointer;
+
+		+ .wpcf7-list-item-label, + label {
+			position: relative;
+			margin-left: 8px;
+
+			&::before {
+				display: inline-block;
+				position: absolute;
+				top: 1px;
+				left: -1.3em;
+				color: #888;
+				.fa;
+				.fa-lg;
+			}
+		}
+	}
+
+	&[type=checkbox] {
+		+ .wpcf7-list-item-label::before, + label::before {
+			content: '\f096';
+		}
+
+		&:checked {
+			+ .wpcf7-list-item-label::before, + label::before {
+				content: '\f046';
+			}
+		}
+	}
+
+	&[type=radio] {
+		+ .wpcf7-list-item-label::before, + label::before {
+			content: '\f1db';
+		}
+
+		&:checked {
+			+ .wpcf7-list-item-label::before, + label::before {
+				content: '\f111';
+			}
+		}
+	}
+
+	&[type=date] {
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+		}
+	}
+
+	&[type=file] {
+		background: transparent;
+		display: none;
+		cursor: pointer;
+	}
+
+	&[type=text] {
+		&::-ms-clear {
+			display:none;
+		}
+	}
+}
+
+button, input[type=submit], .tpl-button {
+	height: 36px;
+	line-height: 36px;
+	width: auto;
+	background-color: #888;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+select {
+	padding-right: 0;
+	line-height: 36px;
+	height: 36px;
+
+	option {
+		.tpl-titlebox( 4px, 14px, #ccc );
+		width: 100%;
+	}
+
+	&[multiple] {
+		height: 120px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+
+		option {
+			.tpl-titlebox( 4px, 0px, #ccc );
+		}
+	}
+
+	&::-ms-expand {
+    	display: none;
+	}
+}
+
+.tpl-select-wrapper {
+	position: relative;
+
+	&::after {
+		content: "";
+		.tpl-triangle ( 6px, #000, down );
+		position: absolute;
+		top: 40%;
+		right: 14px;
+	}
+}
+
+.tpl-file-wrapper {
+	line-height: 1.8em;
+
+	&::before {
+		content: @file_upload;
+		display: inline-block;
+		.tpl-titlebox( 4px, 14px, #ccc );
+	}
+
+	.tpl-filetext {
+		margin-left: 0.5em;
+		display: inline-block;
+	}
+}
+
+textarea {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	height: 10em;
+	resize: vertical;
+}
+
+// Button links
+.tpl-button-wrapper {
+	&.tpl-button-pos-left {
+		text-align: left;
+	}
+
+	&.tpl-button-pos-center {
+		text-align: center;
+	}
+
+	&.tpl-button-pos-right {
+		text-align: right;
+	}
+}
+
+.tpl-button {
+	display: inline-block;
+	text-decoration: none;
+	height: auto;
+
+	&.tpl-button-size-medium {
+		.tpl-titlebox( 8px, 36px, #888 );
+	}
+
+	&.tpl-button-size-big {
+		.tpl-titlebox( 20px, 60px, #888 );
+		font-size: ( 1.5 * @basic_font__size );
+	}
+}
+
+.content p, .widget {
+	.tpl-button:hover {
+		color: initial;
+	}
+}

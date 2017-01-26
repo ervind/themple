@@ -5,8 +5,8 @@ $count = 1;
 if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-		<?php if ( has_post_thumbnail() ) { ?><div class="featimage size-<?php echo tpl_get_loop_image_size(); ?>"><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( tpl_get_loop_image_size() ); ?></a></div><?php } ?>
-		<h1<?php if ( !has_post_thumbnail() ) { echo ' class="nofeat"'; } ?>><a href="<?php the_permalink(); ?>"><?php
+		<?php if ( has_post_thumbnail() ) { ?><div class="tpl-featimage tpl-limg-size-<?php echo esc_attr( tpl_get_loop_image_size() ); ?>"><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( tpl_get_loop_image_size() ); ?></a></div><?php } ?>
+		<h1<?php if ( !has_post_thumbnail() ) { echo ' class="tpl-nofeat"'; } ?>><a href="<?php the_permalink(); ?>"><?php
 			if ( get_the_title() != '' ) {
 				the_title();
 			}

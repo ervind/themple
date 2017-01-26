@@ -31,20 +31,13 @@ class TPL_PB_Widget_Area {
 				"description"	=> __( 'You can use here a widget area already set up in Appearance > Widgets', 'themple' ),
 				"type"			=> 'select',
 				"values"		=> $values,
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'widget_area',
-					),
-				),
 			),
 		);
 
 	}
 
 
+	// Frontend output
 	public function frontend_value( $values = array() ) {
 
 		$result = '';

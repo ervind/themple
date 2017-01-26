@@ -12,7 +12,7 @@ function tpl_set_plugins() {
 			'slug'               => 'themple-helper',
 			'source'             => 'themple-helper.zip',
 			'required'           => true,
-			'version'            => '1.1',
+			'version'            => '1.2',
 			'force_activation'   => false,
 			'force_deactivation' => false,
 		),

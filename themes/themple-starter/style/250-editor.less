@@ -1,0 +1,38 @@
+// 250-editor.less - Special styles for the post editor - THIS FILE IS NOT ADDED TO THE FRONT END CSS!!!
+
+
+
+ul, ol {
+	list-style: disc;
+	overflow: hidden;
+
+	li {
+		margin-left: 0px;
+		line-height: 1.8em;
+	}
+}
+
+& > ul, & > ol, article > ul, article > ol {
+	margin-bottom: 1.8em;
+}
+
+ol {
+	list-style: decimal;
+}
+
+dt, dd {
+	line-height: 1.8em;
+}
+
+dt {
+	font-weight: bold;
+}
+
+dd {
+	margin-left: 36px;
+	margin-bottom: 1.8em;
+}
+
+p:first-child {
+	margin-top: 0;
+}

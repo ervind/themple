@@ -18,11 +18,11 @@
 
 
 // Format of metabox elements
-.meta-option {
+.tpl-meta-option {
 	margin-top: 24px;
 	width: 100%;
 
-	.meta-option-label {
+	.tpl-meta-option-label {
 		width: 30%;
 		max-width: 200px;
 		padding-right: 20px;
@@ -31,13 +31,13 @@
 		font-weight: bold;
 	}
 
-	.meta-option-wrapper {
+	.tpl-meta-option-wrapper {
 		display: block;
 		float: left;
 		width: 70%;
 	}
 
-	.button-container {
+	.tpl-button-container {
 		width: ~"calc(70% + 220px)";
 	}
 
@@ -50,14 +50,14 @@
 		margin-bottom: 0;
 	}
 
-	.datatype-container button {
+	.tpl-datatype-container button {
 		margin-top: 0;
 	}
 
 	.tpl-field {
 		clear: both;
 
-		.button-container {
+		.tpl-button-container {
 			width: 100%;
 		}
 	}
@@ -78,7 +78,6 @@
 
 		li {
 			list-style: none;
-			display: inline-block;
 			position: relative;
 			top: 1px;
 			margin: 0 .2em -4px 0;
@@ -130,15 +129,22 @@
 
 
 // Style of the option descriptions on Theme Options page
-.optiondesc {
-	padding: 20px 10px 15px !important;
+.tpl-optiondesc {
+	padding: 0px 10px 30px !important;
 	border-bottom: 1px solid #ccc;
 	font-style: italic;
-	font-size: 12px !important;
+
+	tr:last-child & {
+		border-bottom: 0;
+	}
+}
+
+.tpl_settings_page_wrap p.submit {
+	margin-top: 0;
 }
 
 
-.button-row td {
+.tpl-button-row td {
 	padding-top: 0;
 }
 
@@ -163,120 +169,148 @@
 	}
 }
 
-.tpl-field {
-	position: relative;
-	display: block;
 
-	.arranger {
-		clear: both;
+
+// Display of the fields
+.tpl-datatype-container {
+	width: 100%;
+	max-width: 800px;
+	display: flex;
+
+	.tpl-datatype-prefix, .tpl-datatype-suffix {
+		display: inline-block;
+		line-height: 40px;
+		background-color: #ddd;
+		text-align: center;
+		padding: 0 10px;
+		margin: 0;
 	}
 
-	&::after {
-		clear: both;
-		display: block;
-		content: '';
+	input:not([type=button]), select, textarea {
+		width: 100%;
+		min-width: 0;
 	}
+
+	input, select {
+		height: 100%;
+		min-height: 40px;
+		margin: 0;
+	}
+
 }
 
 
+
 // Admin icons
-.admin-icon {
+.tpl-admin-icon {
 	.fa;
 	font-size: 1.6em;
 	display: inline-block;
-	color: #ddd;
+	color: #bbb;
 	position: relative;
 	cursor:pointer;
 	text-align: center;
 }
 
-.hovermsg {
-	display: none;
-	width: 100px;
-	background: rgba(255,255,255,0.9);
-	border: #222 1px solid;
-	padding: 2px;
-	font-size: 12px;
-	color: #000;
-	border-radius: 2px;
-	position: absolute;
-	top: 20px;
-	left: 20px;
-	line-height: 1.2em;
-	text-align: left;
-	font-family: arial, sans;
-	z-index: 999;
-}
-
-.button-container {
-	text-align: right;
-	margin-top: 5px;
-	clear: both;
-}
-
-.repeat {
+.tpl-repeat {
 	margin-bottom: 20px;
     position: relative;
     width: 100%;
+	border: 2px solid #ddd;
 
 	&:last-child {
 		margin-bottom: 0;
 	}
 
-	& > div {
-		display: table-cell;
-	}
-
-	.admin-icon {
-		vertical-align: middle;
-	}
-
 	& > .tpl-field-inner {
 		padding: 20px;
-		border: 2px solid #ddd;
-		width: 100%;
+		background-color: #f8f8f8;
+
+		&::after {
+			clear: both;
+			display: block;
+			content: '';
+		}
 	}
 }
 
-.datatype-container {
+.tpl-repeat-header {
+	height: 40px;
+	display: flex;
+	border-bottom: 2px solid #ddd;
+	background-color: #fff;
+	overflow: hidden;
+
+	&.tpl-repeat-header-closed {
+		border-bottom: 0;
+	}
+
+	& > * {
+		line-height: 40px;
+	}
+
+	.tpl-admin-icon {
+		min-width: 44px;
+		color: #bbb;
+		background: #ddd;
+		height: 100%;
+	}
+}
+
+.tpl-header-title {
 	width: 100%;
-	max-width: 800px;
-
-	&.tpl-combined-wrapper {
-		max-width: 100%;
-	}
-
-	input:not([type=button]), select, textarea {
-		width: 100%;
-	}
-
-	input, select {
-		height: 40px;
-	}
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
-.arranger {
-	border-top: 2px solid #ddd;
-	border-bottom: 2px solid #ddd;
-	padding: 0 18px 0 20px;
-	color: #bbb;
-	background: #ddd;
-
-	&::before {
-		content: @fa-var-arrows;
-	}
+.tpl-header-title-instance {
+	color: #999;
+	margin-right: 10px;
 }
 
-.remover {
-	border-top: 2px solid #ddd;
-	border-bottom: 2px solid #ddd;
-	padding: 0 20px 0 18px;
-	color: #bbb;
-	background: #ddd;
+.tpl-arranger::before {
+	content: @fa-var-arrows;
+}
 
-	&::before {
-		content: @fa-var-minus;
-	}
+.tpl-remover::before {
+	content: @fa-var-minus;
+}
+
+.tpl-toggle-close::before {
+	content: @fa-var-chevron-up;
+}
+
+.tpl-toggle-open::before {
+	content: @fa-var-chevron-down;
+}
+
+.tpl-pb-section-settings-toggle {
+	height: 20px;
+	width: 20px;
+	display: block;
+	float: right;
+	font-size: 1.3333em;
+}
+
+.tpl-pb-section-settings-toggle-open::after {
+	content: @fa-var-chevron-down;
+}
+
+.tpl-pb-section-settings-toggle-close::after {
+	content: @fa-var-chevron-up;
+}
+
+.tpl-pb-section-settings {
+	height: 0;
+	overflow: hidden;
+	padding: 0 !important;
+	border-bottom-width: 0 !important;
+}
+
+.tpl-pb-section-settings-open {
+	height: auto;
+	padding: 20px !important;
+	border-bottom-width: 2px !important;
 }
 
 .tpl-default-value {
@@ -293,4 +327,35 @@
 	color: #bbb;
 	margin-left: 6px;
 	font-size: 1.33333333em;
+}
+
+.tpl-button-container {
+	text-align: right;
+	margin-top: 5px;
+	clear: both;
+
+	button {
+		padding: 6px 24px;
+		border: 1px solid #999;
+		border-radius: 2px;
+		background: linear-gradient(to bottom, rgba(250,250,250,1) 0%, rgba(220,220,220,1) 100%);
+
+		&:active {
+			background: linear-gradient(to bottom, rgba(200,200,200,1) 0%, rgba(220,220,220,1) 100%);
+		}
+	}
+
+	input::-webkit-calendar-picker-indicator{
+	    display: none;
+	}
+
+	input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+}
+
+.tpl-meta-option-label .fa {
+	vertical-align: middle;
 }

@@ -28,8 +28,8 @@ function tpl_setup () {
 add_action ( 'after_setup_theme', 'tpl_setup' );
 
 
-// Apply the front end style to the TinyMCE editor in the back end
-function tpl_add_editor_styles() {
-    add_editor_style( get_template_directory_uri() . '/style/css/theme.css' );
-}
-add_action( 'init', 'tpl_add_editor_styles' );
+
+// Add the Extra CSS from the Theme Options at the end of the theme.css file
+add_filter( 'tpl_output_css', function( $css ){
+	return $css . tpl_get_option( 'extra_css' );
+} );

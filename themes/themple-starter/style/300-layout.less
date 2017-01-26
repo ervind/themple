@@ -1,0 +1,53 @@
+// 300-layout.less - Basic layout of the page
+
+
+
+body {
+	background: #fff;
+}
+
+#wrapper {
+	padding-bottom: 125px;
+}
+
+.tpl-wrapper {
+	width: 100%;
+}
+
+#contentWrapper {
+	margin-top: 45px;
+}
+
+#right-sidebar {
+	float: right;
+}
+
+#left-sidebar {
+	float: left;
+}
+
+.tpl-layout-sidebar-left .content {
+	float: right;
+}
+
+.tpl-mobile-only {
+	display: none;
+}
+
+.tpl-desktop-only {
+	display: block;
+}
+
+.tpl-touch {
+	.tpl-mobile-only {
+        display: block;
+    }
+
+    .tpl-desktop-only {
+    	display: none;
+    }
+}
+
+.tpl-touch .tpl-menu-wrapper nav {
+	.tpl-mobile-nav;
+}

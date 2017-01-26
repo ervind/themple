@@ -22,27 +22,20 @@ class TPL_PB_Free_Text {
 				"name"			=> 'free_text_textarea',
 				"title"			=> __( 'Free text input', 'themple' ),
 				"description"	=> __( 'You can enter any kind of text and HTML into this box.', 'themple' ),
-				"type"			=> 'textarea',
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'free_text',
-					),
-				),
+				"type"			=> 'tinymce',
 			),
 		);
 
 	}
 
 
+	// Frontend output
 	public function frontend_value( $values = array() ) {
 
 		$result = '';
 
 		if ( isset( $values["free_text_textarea"] ) ) {
-			$result = wpautop( $values["free_text_textarea"] );
+			$result = do_shortcode( wpautop( $values["free_text_textarea"] ) );
 		}
 
 		return $result;

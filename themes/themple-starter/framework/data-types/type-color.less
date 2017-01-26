@@ -1,5 +1,5 @@
 // Color field specific less
-.tpl-field.color {
+.tpl-field.tpl-dt-color {
 
 	.wp-picker-active {
 		position: relative;
@@ -11,8 +11,21 @@
 		border-radius: 3px;
 	}
 
+	input {
+		min-height: 0;
+		float: left;
+	}
+
 	.tpl-color-field {
 		height: 25px;
 	}
 
+}
+
+.tpl-color-preview {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	border: 1px solid #ddd;
+	vertical-align: text-bottom;
 }

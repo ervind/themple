@@ -3,13 +3,6 @@
 // The file must have the type-[data-type].php filename format
 
 
-// Enqueue the media uploader script
-add_action( 'admin_print_scripts-appearance_page_tpl_theme_options', function() {
-	wp_enqueue_media();
-} );
-
-
-
 class TPL_Image extends TPL_Data_Type {
 
 	protected	$less_string	= true;				// Should the LESS variable forced to be a string or keep as a natural value
@@ -20,12 +13,32 @@ class TPL_Image extends TPL_Data_Type {
 	// Sets up the object attributes while registering options
 	public function __construct( $args ) {
 
-		if ( !isset( $args["admin_class"] ) ) {
+		global $tpl_settings_pages;
+
+ 		if ( !isset( $args["admin_class"] ) ) {
 			$args["admin_class"] = '';
 		}
-		$args["admin_class"] .= ' uploader';
+		$args["admin_class"] .= ' tpl-uploader';
 
 		parent::__construct( $args );
+
+
+		add_action( 'init', function() {
+
+			if ( !isset( $tpl_settings_pages[$this->get_data_section()]["image_uploader"] ) && tpl_is_primary_section( $this->section ) ) {
+
+				add_filter( 'tpl_admin_js_strings', array( $this, 'admin_js_strings' ) );
+
+				// Enqueue the media uploader script
+				add_action( 'admin_print_scripts-' . $this->get_settings_page() . '_' . $this->get_data_section(), function() {
+					wp_enqueue_media();
+				} );
+
+			$tpl_settings_pages[$this->get_data_section()]["image_uploader"] = true;
+
+			}
+
+		}, 40 );
 
 	}
 
@@ -42,35 +55,34 @@ class TPL_Image extends TPL_Data_Type {
 
 		$imgdata = wp_get_attachment_image_src( $id, 'thumbnail' );
 
-		echo '<div class="datatype-container">';
+		echo '<div class="tpl-datatype-container">';
 
-		echo '	<div class="image-container">
-					<img class="uploaded-image" alt="" src="' . $imgdata[0] . '"';
+		echo '	<div class="tpl-image-container">
+					<img class="tpl-uploaded-image tpl-preview-0" alt="' . sprintf( __( '%s image tag', 'themple' ), esc_attr( $this->title ) ) . '" src="' . esc_url( $imgdata[0] ) . '"';
 
 			if ( $id == '' || !is_numeric( $id ) ) {
 				echo ' style="display: none"';
 			}
 
-		echo ' />
-					<img class="placeholder" alt="" src="' . get_template_directory_uri() .'/framework/img/no-image-placeholder.png"';
+		echo '>
+					<img class="tpl-img-placeholder" alt="' . __( 'Placeholder image', 'themple' ) . '" src="' . esc_url( tpl_base_uri() ) .'/framework/img/no-image-placeholder.png"';
 
 			if ( $id != '' && is_numeric( $id ) ) {
 				echo ' style="display: none;"';
 			}
 
-		echo '  />
-					<div class="admin-icon closer" style="';
+		echo '>
+					<div class="tpl-admin-icon tpl-closer" style="';
 
 			if ( $id == '' || !is_numeric( $id ) ) {
 				echo ' display: none';
 			}
 
-		echo '">
-						<span class="hovermsg">'. __( 'Click here to remove image.', 'themple' ) .'</span>
+		echo '" title="'. __( 'Click here to remove image.', 'themple' ) .'">
 					</div>
 				</div>
-				<input class="img_id" type="hidden" name="' . $this->form_ref() . '" id="' . $this->form_ref() . '" value="' . $id . '" />
-				<input class="button" type="button" name="' . $this->name . '_button" value="'. __( 'Upload', 'themple' ) .'" />';
+				<input class="tpl-img_id" type="hidden" name="' . esc_attr( $this->form_ref() ) . '" id="' . esc_attr( $this->form_ref() ) . '" value="' . esc_attr( $id ) . '">
+				<input class="button" type="button" name="' . esc_attr( $this->name ) . '_button" value="'. __( 'Upload', 'themple' ) .'">';
 
 		echo '</div>';
 
@@ -79,6 +91,11 @@ class TPL_Image extends TPL_Data_Type {
 
 	// Formats the option into value
 	public function format_option ( $value, $args = array() ) {
+
+		// Return the image ID if we force it to be unformatted
+		if ( $this->unformatted ) {
+			return $value;
+		}
 
 		// Determining the size to be displayed
 		if ( !isset( $args["size"] ) ) {
@@ -191,6 +208,21 @@ class TPL_Image extends TPL_Data_Type {
 
 	}
 
+
+	// Strings to be added to the admin JS files
+	public function admin_js_strings( $strings ) {
+
+		$strings = array_merge( $strings, array(
+			'uploader_title'		=> __( 'Choose Image', 'themple' ),
+			'uploader_button'		=> __( 'Choose Image', 'themple' ),
+			'tpl-dt-image_preview-template'	=> '<img src="[tpl-preview-0]" class="tpl-image-preview">',
+		) );
+
+		return $strings;
+
+	}
+
+
 }
 
 
@@ -229,7 +261,7 @@ function tpl_logo ( $link = true, $args = false ) {
 		$args = array(
 			'alt'	=> get_bloginfo( "name" ),
 			'title'	=> get_bloginfo( "name" ),
-			'class'	=> "logo",
+			'class'	=> "tpl-logo",
 			'path'	=> array( 0 => 'tpl_logo' ),
 		);
 	}
@@ -241,25 +273,37 @@ function tpl_logo ( $link = true, $args = false ) {
 			$args["path"][1] = 0;
 		}
 
+		// If there is a logo set up, display it with the link or without
 		if ( $imgobj->get_option() != '' ) {
 
 			if ( $link ) {
-				echo '<a href="' . get_bloginfo ('url') . '">' . $imgobj->get_value( $args ) . '</a>';
+				echo '<a href="' . esc_url( get_bloginfo( 'url' ) ) . '">';
 			}
-			else {
-				echo $imgobj->get_value( $args );
+
+			echo $imgobj->get_value( $args );
+
+			if ( $link ) {
+				echo '</a>';
 			}
 
 		}
 
+		// Else display an H1 tag with the site title
 		else {
 
+			echo '<h1 class="tpl-logo">';
+
 			if ( $link ) {
-				echo '<h1 class="logo"><a href="' . get_bloginfo ('url') . '">' . get_bloginfo( "name" ) . '</a></h1>';
+				echo '<a href="' . esc_url( get_bloginfo ('url') ) . '">';
 			}
-			else {
-				echo '<h1 class="logo">' . get_bloginfo( "name" ) . '</h1>';
+
+			echo esc_html( get_bloginfo( "name" ) );
+
+			if ( $link ) {
+				echo '</a>';
 			}
+
+			echo '</h1>';
 
 		}
 

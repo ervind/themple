@@ -12,16 +12,16 @@ function tpl_comment( $comment, $args, $depth ) {
 	$add_below = 'comment';
 
 	?>
-	<<?php echo $tag ?> <?php comment_class( empty( $args["has_children"] ) ? '' : 'parent' ); ?> id="comment-<?php comment_ID(); ?>" itemscope itemtype="http://schema.org/Comment">
+	<<?php echo esc_attr( $tag ); ?> <?php comment_class( empty( $args["has_children"] ) ? '' : 'parent' ); ?> id="comment-<?php comment_ID(); ?>" itemscope itemtype="https://schema.org/Comment">
 		<div class="comment-inner">
 			<figure class="gravatar"><?php echo get_avatar( $comment, $args["avatar_size"] ); ?></figure>
 			<div class="comment-meta" role="complementary">
 				<p class="comment-author"><?php _e( 'Posted on', 'themple-starter' ); ?> <time class="comment-meta-item" datetime="<?php comment_date( 'Y-m-d' ); ?>T<?php comment_time( 'H:iP' ); ?>" itemprop="datePublished"><?php comment_date( 'jS F Y' ); ?>, <?php comment_time(); ?></time> <?php
 					if ( get_comment_author_url() != '' ) {
-						$cauthor_text = '<a class="comment-author-link" href="'. get_comment_author_url() .'" itemprop="author">' . get_comment_author() . '</a>';
+						$cauthor_text = '<a class="comment-author-link" href="'. esc_url( get_comment_author_url() ) .'" itemprop="author">' . esc_html( get_comment_author() ) . '</a>';
 					}
 					else {
-						$cauthor_text = get_comment_author();
+						$cauthor_text = esc_html( get_comment_author() );
 					}
 					printf( __( 'by %s', 'themple-starter' ), $cauthor_text );
 					?></p>

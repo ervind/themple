@@ -23,13 +23,30 @@ if ( !function_exists( '_wp_render_title_tag' ) ) {
 
 // Prints a hamburger icon for mobile menu
 function tpl_hamburger_icon( $for_id, $class = '' ) {
-	echo '<div class="hamburger-icon';
+
+	echo '<div class="tpl-hamburger-icon';
+
 	if ( $class != '' ) {
-		echo ' ' . $class;
+		echo ' ' . esc_attr( $class );
 	}
-	echo '" data-for="'. $for_id .'">
-	<span class="hamburger-line"></span>
-	<span class="hamburger-line"></span>
-	<span class="hamburger-line"></span>
+
+	echo '" data-for="' . esc_attr( $for_id ) . '">
+	<span class="tpl-hamburger-line"></span>
+	<span class="tpl-hamburger-line"></span>
+	<span class="tpl-hamburger-line"></span>
 </div>';
+
 }
+
+
+// Adds Google fonts to the header
+function tpl_add_google_fonts() {
+
+	global $tpl_font_family_sets;
+
+	if ( isset( $tpl_font_family_sets["Google fonts"] ) && array_key_exists( tpl_get_value( 'basic_font/0/family' ), $tpl_font_family_sets["Google fonts"] ) ) {
+		wp_enqueue_style( 'tpl-google-fonts', '//fonts.googleapis.com/css?family=' . tpl_get_value( 'basic_font/0/family' ) . ':300,400,600,700' );
+	}
+
+}
+add_action( 'wp_enqueue_scripts', 'tpl_add_google_fonts' );

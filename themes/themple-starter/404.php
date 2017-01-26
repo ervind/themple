@@ -1,5 +1,6 @@
 <?php
 get_header();
+
 $layout = tpl_get_layout();
 if ( $layout == 'full' ) {
 	$columns = 12;
@@ -9,14 +10,20 @@ else {
 }
 ?>
 
-<div id="contentWrapper" class="row">
-    <main id="content" class="content column-<?php echo $columns; ?>">
+<div id="contentWrapper">
 
-		<?php get_template_part ( 'inc/loops/loop' ); ?>
+	<div class="tpl-grid-row">
 
-    </main><!-- content -->
+	    <main id="content" class="content tpl-grid-column-<?php echo $columns ?>">
 
-	<?php get_sidebar(); ?>
+			<h1 class="tpl-nofeat"><?php _e( '404 Error', 'themple-starter' ); ?></h1>
+			<?php get_template_part ( 'inc/loops/loop' ); ?>
+
+    	</main><!-- content -->
+
+		<?php get_sidebar(); ?>
+
+	</div>
 
 </div><!-- contentWrapper -->
 

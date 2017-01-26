@@ -18,6 +18,7 @@ class TPL_Icon extends TPL_Combined {
 				"title"			=> __( 'Icon', 'themple' ),
 				"description"	=> __( 'The Font Awesome code of the icon (uses the fa-xxx name structure)', 'themple' ),
 				"type"			=> 'font_awesome',
+				"admin_class"	=> 'tpl-select-preview-key',
 			),
 			array(
 				"name"			=> 'color',
@@ -66,13 +67,7 @@ class TPL_Icon extends TPL_Combined {
 				"name"			=> 'newtab',
 				"title"			=> __( 'Open in new tab?', 'themple' ),
 				"description"	=> __( 'If yes, the link will open in a new browser tab', 'themple' ),
-				"type"			=> 'select',
-				"default"		=> 'no',
-				"values"		=> array(
-					"no"			=> __( 'No', 'themple' ),
-					"yes"			=> __( 'Yes', 'themple' ),
-				),
-				"key"			=> true,
+				"type"			=> 'boolean',
 				"condition"		=> array(
 					array(
 						"type"		=> 'option',
@@ -89,7 +84,7 @@ class TPL_Icon extends TPL_Combined {
 	}
 
 
-	public function form_field_before ( $extra_class = 'tpl-dt-icon combined' ) {
+	public function form_field_before ( $extra_class = 'tpl-dt-combined' ) {
 
 		parent::form_field_before( $extra_class );
 
@@ -157,7 +152,6 @@ class TPL_Icon extends TPL_Combined {
 
 
 
-	// Echoes the value of the option
 	// Prints the value as a list
 	public function value ( $args = array() ) {
 
@@ -174,13 +168,19 @@ class TPL_Icon extends TPL_Combined {
 		}
 
 		$values = $this->get_value( $args );
+		$kses_extra = array(
+			'i'	=> array(
+				'style'	=> array(),
+				'class'	=> array(),
+			),
+		);
 
 		// List all
 		if ( !isset( $args["path"][$path_i] ) ) {
 
 			echo '<ul>';
 			foreach ( $values as $value ) {
-				echo '<li>' . $value . '</li>';
+				echo '<li>' . tpl_kses( $value, $kses_extra ) . '</li>';
 			}
 			echo '</ul>';
 			return;
@@ -192,7 +192,7 @@ class TPL_Icon extends TPL_Combined {
 
 			if ( !isset( $args["path"][$path_s] ) ) {
 
-				echo $values;
+				echo tpl_kses( $values, $kses_extra );
 
 			}
 
@@ -201,7 +201,7 @@ class TPL_Icon extends TPL_Combined {
 
 				foreach ( $this->parts as $part ) {
 					if ( $part->name == $args["path"][$path_s] ) {
-						echo $part->get_value( $args );
+						echo tpl_kses( $part->get_value( $args, $kses_extra ) );
 					}
 				}
 
@@ -210,5 +210,19 @@ class TPL_Icon extends TPL_Combined {
 		}
 
 	}
+
+
+
+	// Strings to be added to the admin JS files
+	public function admin_js_strings( $strings ) {
+
+		$strings = array_merge( $strings, array(
+			'tpl-dt-icon_preview-template'	=> '<i class="fa fa-fw fa-lg fa-[code/tpl-preview-1]" style="color: [color/tpl-preview-0]"></i> [title/tpl-preview-1]',
+		) );
+
+		return $strings;
+
+	}
+
 
 }

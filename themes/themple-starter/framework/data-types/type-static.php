@@ -12,7 +12,7 @@ class TPL_Static extends TPL_Data_Type {
 	public function form_field_content ( $for_bank = false ) {
 
 		$value = $this->get_option();
-		echo $this->prefix . $value . $this->suffix;
+		echo tpl_kses( $this->prefix . $value . $this->suffix );
 
 	}
 

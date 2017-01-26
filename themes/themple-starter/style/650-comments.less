@@ -1,0 +1,92 @@
+// 650-comments.less - post comment styles
+
+
+
+.pingback {
+	margin-bottom: 2em;
+}
+
+.comment-list {
+	list-style: none;
+	margin-bottom: 3em;
+
+	.comment {
+		margin-bottom: 2em;
+
+		.comment-author {
+			line-height: 1.2em;
+			margin-bottom: 0.6em;
+		}
+
+		.comment-reply-link {
+			margin-bottom: 1em;
+			display: inline-block;
+		}
+
+		a {
+			.tpl-link-invert;
+		}
+
+		.comment-inner {
+			padding-bottom: 1em;
+		}
+
+		&.odd > .comment-inner {
+			background-color: #e8e8e8;
+		}
+
+		&.even > .comment-inner {
+			background-color: #f6f6f6;
+		}
+
+		.comment {
+			margin-top: 2em;
+			padding-left: 3em;
+		}
+	}
+
+	.avatar {
+		float: left;
+		margin-right: 1em;
+		margin-bottom: 1em;
+	}
+
+	.comment-meta {
+		padding-top: 0.5em;
+	}
+
+	p, div {
+		margin-bottom: 0;
+	}
+
+	.comment-content {
+		.clear;
+		padding-left: 2em;
+		padding-right: 2em;
+	}
+}
+
+.comment-respond {
+	#cancel-comment-reply-link {
+		color: #999;
+	}
+}
+
+.comment-form {
+	p {
+		margin-bottom: 0.8em;
+
+		label {
+			display: block;
+			line-height: 1.8em;
+		}
+	}
+
+	.comment-notes {
+		line-height: 1.8em;
+	}
+
+	.form-submit {
+		margin-top: 1.8em;
+	}
+}

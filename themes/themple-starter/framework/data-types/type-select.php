@@ -9,10 +9,35 @@ class TPL_Select extends TPL_Data_Type {
 	public		$key				= false;		// Should return the key (true) or the label (false)?
 
 
+	public function __construct( $args ) {
+
+		global $tpl_select_added;
+
+		parent::__construct( $args );
+
+		if ( $tpl_select_added !== true ) {
+
+			add_action( 'admin_enqueue_scripts', function ( $hook_suffix ) {
+				if ( !wp_script_is( 'select2' ) ) {
+					wp_enqueue_script( 'tpl-select2', tpl_base_uri() . '/framework/lib/select2/js/select2.min.js', array( 'jquery' ) );
+				}
+				wp_enqueue_style( 'tpl-select2-style', tpl_base_uri() . '/framework/lib/select2/css/select2.min.css', array() );
+			} );
+			$tpl_select_added = true;
+
+		}
+
+	}
+
+
 	// Writes the form field in wp-admin
 	public function form_field_content ( $for_bank = false ) {
 
-		echo '<div class="datatype-container">';
+		echo '<div class="tpl-datatype-container">';
+
+		if ( $this->prefix ) {
+			echo '<span class="tpl-datatype-prefix tpl-preview-0">' . $this->prefix . '</span>';
+		}
 
 		// The saved or default value:
 		$id = $this->get_option();
@@ -21,24 +46,53 @@ class TPL_Select extends TPL_Data_Type {
 			$id = $this->default;
 		}
 
-		echo '<select id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" autocomplete="off">';
+		echo '<select class="tpl-preview-1" id="' . esc_attr( $this->form_ref() ) . '" name="' . esc_attr( $this->form_ref() ) . '" autocomplete="off">';
 
 		if ( $this->placeholder != '' ) {
-			echo '<option value="">' . $this->placeholder . '</option>';
+			echo '<option value="">' . esc_html( $this->placeholder ) . '</option>';
 		}
 
 		foreach ( $this->values as $key => $value ) {
-			echo '<option value="' . esc_attr( $key ) . '"';
 
-			if ( $key == $id ) {
-				echo ' selected';
+			if ( is_array( $value ) ) {
+
+				echo '<optgroup label="' . esc_attr( $key ) . '">';
+
+				foreach ( $value as $sub_key => $sub_value ) {
+
+					echo '<option value="' . esc_attr( $sub_key ) . '"';
+
+					if ( $sub_key == $id ) {
+						echo ' selected';
+					}
+
+					echo '>' . esc_html( $sub_value ) . '</option>';
+
+				}
+
+				echo '</optgroup>';
+
 			}
 
-			echo '>' . esc_html( $value ) . '</option>';
+			else {
+
+				echo '<option value="' . esc_attr( $key ) . '"';
+
+				if ( $key == $id ) {
+					echo ' selected';
+				}
+
+				echo '>' . esc_html( $value ) . '</option>';
+
+			}
 
 		}
 
 		echo '</select>';
+
+		if ( $this->suffix ) {
+			echo '<span class="tpl-datatype-suffix tpl-preview-2">' . $this->suffix . '</span>';
+		}
 
 		echo '</div>';
 
@@ -50,25 +104,11 @@ class TPL_Select extends TPL_Data_Type {
 
 		$path_i = $this->get_level() * 2 + 1;
 
-		if ( !empty( $this->default ) || !empty( $this->prefix ) || !empty( $this->suffix ) ) {
-			echo ' <div class="tpl-default-container">
+		if ( !empty( $this->default ) ) {
+			echo '<div class="tpl-default-container">
 				<i class="tpl-default-value">(';
 
-			$text = '';
-
-			if ( !empty( $this->prefix ) ) {
-				$text .= __( 'prefix:', 'themple' ) . ' ' . $this->prefix . '; ';
-			}
-
-			if ( !empty( $this->suffix ) ) {
-				$text .= __( 'suffix:', 'themple' ) . ' ' . $this->suffix . '; ';
-			}
-
-			if ( !empty( $this->default ) ) {
-				$text .= __( 'default:', 'themple' ) . ' ' . $this->format_option( $this->default, array( "key" => false ) ) . '; ';
-			}
-
-			echo rtrim( $text, '; ' );
+			echo __( 'default:', 'themple' ) . ' ' . tpl_kses( $this->format_option( $this->default, array( "key" => false ) ) );
 
 			echo ')</i>
 			</div>';
@@ -77,9 +117,6 @@ class TPL_Select extends TPL_Data_Type {
 		echo '</div>';		// .tpl-field-inner
 
 		if ( $this->repeat !== false ) {
-			if ( !isset( $this->repeat["number"] ) ) {
-				echo '<div class="admin-icon remover"><span class="hovermsg">' . __( 'Remove row', 'themple' ) . '</span></div>';
-			}
 			$this->path[$path_i]++;
 		}
 
@@ -99,6 +136,17 @@ class TPL_Select extends TPL_Data_Type {
 			$key = $args["key"];
 		}
 
+		$values = $this->values;
+
+		foreach ( $values as $k => $value ) {
+			if ( is_array( $value ) ) {
+				foreach ( $value as $sub_key => $sub_value ) {
+					$values[$sub_key] = $sub_value;
+				}
+				unset( $values[$k] );
+			}
+		}
+
 		if ( $key ) {
 			return $id;
 		}
@@ -106,7 +154,7 @@ class TPL_Select extends TPL_Data_Type {
 			return $id;
 		}
 		else {
-			return $this->prefix . $this->values[$id] . $this->suffix;
+			return $this->prefix . $values[$id] . $this->suffix;
 		}
 
 	}

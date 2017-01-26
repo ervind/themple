@@ -8,7 +8,7 @@ function tpl_excerpt_more( $more ) {
 
 	global $post;
 
-	return ' <a class="readmore" href="'. get_permalink( $post->ID ) . '">'. esc_html( tpl_get_value ( 'readmore' ) ) .'</a>';
+	return ' <a class="tpl-readmore" href="'. get_permalink( $post->ID ) . '">'. esc_html( tpl_get_value ( 'readmore' ) ) .'</a>';
 
 }
 add_filter( 'excerpt_more', 'tpl_excerpt_more' );
@@ -59,7 +59,7 @@ function tpl_show_post_in_loop( $post, $format = 'default' ) {
 
 	// If unformatted, the excerpt is returned without html elements
 	if ( $format == 'unformatted' ) {
-		the_excerpt();
+		echo wpautop( tpl_kses( get_the_excerpt() ) );
 		return;
 	}
 
@@ -85,7 +85,7 @@ function tpl_show_post_in_loop( $post, $format = 'default' ) {
 		the_content( esc_html( tpl_get_value( 'readmore' ) ) );
 	}
 	else {
-		the_excerpt();
+		echo wpautop( tpl_kses( get_the_excerpt() ) );
 	}
 
 }

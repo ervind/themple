@@ -13,4 +13,4 @@
 /plugins/themple-helper
 
 ## Documentation on this package  
-Visit http://arachnoidea.com/themple-framework/
+Visit http://a-idea.studio/themple-framework/

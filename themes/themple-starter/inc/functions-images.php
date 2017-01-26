@@ -4,46 +4,48 @@
 
 
 // Setting up custom image sizes. 'post-thumbnail' is a special item, it describes the default post thumbnail size.
-function tpl_image_sizes() {
+function tpl_image_sizes( $image_sizes = array() ) {
 
-	$image_sizes = array(
-		// The post thumbnail in sidebar view
-		'post-thumbnail' => array(
-			'title'		=> __( 'Post Thumbnail', 'themple-starter' ),
-			'width'		=> 780,
-			'height'	=> 350,
-			'crop'		=> array( 'center', 'center' ),
-			'select'	=> true,
-		),
-		// Size of the logo
-		'logo-size' => array(
-			'title'		=> __( 'Logo size', 'themple-starter' ),
-			'width'		=> 220,
-			'height'	=> 180,
-			'crop'		=> false,
-			'select'	=> false,
-		),
-		// Post thumbnails in full width mode
-		'full-width' => array(
-			'title'		=> __( 'Full Width', 'themple-starter' ),
-			'width'		=> 1180,
-			'height'	=> 529,
-			'crop'		=> array( 'center', 'center' ),
-			'select'	=> true,
-		),
-		// Post thumbnails for small mobile screens
-		'thumb-small' => array(
-			'title'		=> __( 'Small Thumbnail', 'themple-starter' ),
-			'width'		=> 480,
-			'height'	=> 215,
-			'crop'		=> array( 'center', 'center' ),
-			'select'	=> true,
-		),
+	// The post thumbnail in sidebar view
+	$image_sizes["post-thumbnail"] = array(
+		'title'		=> __( 'Post Thumbnail', 'themple-starter' ),
+		'width'		=> 780,
+		'height'	=> 350,
+		'crop'		=> array( 'center', 'center' ),
+		'select'	=> true,
+	);
+
+	// Size of the logo
+	$image_sizes["logo-size"] = array(
+		'title'		=> __( 'Logo size', 'themple-starter' ),
+		'width'		=> 220,
+		'height'	=> 180,
+		'crop'		=> false,
+		'select'	=> false,
+	);
+
+	// Post thumbnails in full width mode
+	$image_sizes["full-width"] = array(
+		'title'		=> __( 'Full Width', 'themple-starter' ),
+		'width'		=> 1180,
+		'height'	=> 529,
+		'crop'		=> array( 'center', 'center' ),
+		'select'	=> true,
+	);
+
+	// Post thumbnails for small mobile screens
+	$image_sizes["thumb-small"] = array(
+		'title'		=> __( 'Small Thumbnail', 'themple-starter' ),
+		'width'		=> 480,
+		'height'	=> 215,
+		'crop'		=> array( 'center', 'center' ),
+		'select'	=> true,
 	);
 
 	return $image_sizes;
 
 }
+add_filter( 'tpl_image_sizes', 'tpl_image_sizes', 10, 1 );
 
 
 // Decides which image size to use in the loop depending on the settings and the image size

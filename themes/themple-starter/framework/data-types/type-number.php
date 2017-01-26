@@ -24,24 +24,32 @@ class TPL_Number extends TPL_Data_Type {
 			$value = $this->default;
 		}
 
-		echo '<div class="datatype-container">';
+		echo '<div class="tpl-datatype-container">';
 
-		echo '<input type="number" id="' . $this->form_ref() . '" name="' . $this->form_ref() . '" value="' . esc_attr( $value ) . '"';
+		if ( $this->prefix ) {
+			echo '<span class="tpl-datatype-prefix tpl-preview-0">' . $this->prefix . '</span>';
+		}
+
+		echo '<input type="number" class="tpl-preview-1" id="' . esc_attr( $this->form_ref() ) . '" name="' . esc_attr( $this->form_ref() ) . '" value="' . esc_attr( $value ) . '"';
 
 		if ( $this->min != NULL ) {
-			echo ' min="' . $this->min . '"';
+			echo ' min="' . intval( $this->min ) . '"';
 		}
 		if ( $this->max != NULL ) {
-			echo ' max="' . $this->max . '"';
+			echo ' max="' . intval( $this->max ) . '"';
 		}
 		if ( $this->step != NULL ) {
-			echo ' step="' . $this->step . '"';
+			echo ' step="' . intval( $this->step ) . '"';
 		}
 		if ( $this->placeholder != '' ) {
-			echo ' placeholder="' . $this->placeholder . '"';
+			echo ' placeholder="' . esc_attr( $this->placeholder ) . '"';
 		}
 
-		echo ' />';
+		echo '>';
+
+		if ( $this->suffix ) {
+			echo '<span class="tpl-datatype-suffix tpl-preview-2">' . $this->suffix . '</span>';
+		}
 
 		echo '</div>';
 

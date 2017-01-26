@@ -23,14 +23,6 @@ class TPL_PB_Shortcode {
 				"title"			=> __( 'Shortcode name', 'themple' ),
 				"description"	=> __( 'The shortcode name / identifier', 'themple' ),
 				"type"			=> 'text',
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'shortcode',
-					),
-				),
 			),
 			array(
 				"name"			=> "shortcode_type",
@@ -40,14 +32,6 @@ class TPL_PB_Shortcode {
 				"values"		=> array(
 					"self-closing"	=> __( 'Self-closing', 'themple' ),
 					"enclosing"		=> __( 'Enclosing', 'themple' ),
-				),
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'shortcode',
-					),
 				),
 			),
 			array(
@@ -61,12 +45,6 @@ class TPL_PB_Shortcode {
 						"name"		=> '_THIS_/shortcode_type',
 						"relation"	=> '=',
 						"value"		=> 'enclosing',
-					),
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'shortcode',
 					),
 				),
 			),
@@ -91,20 +69,13 @@ class TPL_PB_Shortcode {
 						"type"			=> 'text',
 					),
 				),
-				"condition"		=> array(
-					array(
-						"type"		=> 'option',
-						"name"		=> '_THIS_/app_type',
-						"relation"	=> '=',
-						"value"		=> 'shortcode',
-					),
-				),
 			),
 		);
 
 	}
 
 
+	// Frontend output
 	public function frontend_value( $values = array() ) {
 
 		$result = '';
