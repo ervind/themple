@@ -13,8 +13,6 @@ $tpl_option_array = array (
         "default"		=> '1200',
         "suffix"		=> 'px',
         "placeholder"   => __( 'Enter a number here', 'themple-starter' ),
-		"repeat"=>true,
-		"js"=>true,
 );
 tpl_register_option ( $tpl_option_array );
 
@@ -25,7 +23,6 @@ $tpl_option_array = array (
         "title"			=> __( 'Font try', 'themple-starter' ),
         "section"		=> 'general',
         "type"			=> 'font_awesome',
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_option_array );
 
@@ -36,8 +33,6 @@ $tpl_option_array = array (
         "description"	=> __( 'The values for the basic font declaration for the theme. You can override these in your style files.', 'themple-starter' ),
         "section"		=> 'general',
         "type"			=> 'combined',
-		"repeat"=>true,
-		"preview"=>'[dummy/dummy2/tpl-preview-0]',
 		"parts"			=> array(
 			array(
 				"name"          => 'family',
@@ -47,7 +42,6 @@ $tpl_option_array = array (
 				"default"		=> 'Arial',
 				"sets"			=> array( 'Standard fonts', 'Google fonts' ),
 				"placeholder"   => __( 'Select font family', 'themple-starter' ),
-				"repeat"=>true,
 			),
 			array(
 				"name"			=> 'size',
@@ -130,7 +124,6 @@ $tpl_logo = array (
         "section"		=> 'header',
         "type"			=> 'image',
         "size"			=> 'logo-size',
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_logo );
 
@@ -214,7 +207,6 @@ $tpl_option_array = array (
         "section"		=> 'colors',
         "type"			=> 'color',
         "default"		=> '#2a4360',
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_option_array );
 
@@ -227,7 +219,6 @@ $tpl_option_array = array (
         "section"		=> 'colors',
         "type"			=> 'boolean',
 		"default"		=> false,
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_option_array );
 
@@ -246,7 +237,6 @@ $tpl_option_array = array (
         ),
         "default"		=> 'right',
         "key"           => true,
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_option_array );
 
@@ -278,7 +268,6 @@ $tpl_option_array = array (
 		"type"			=> 'text',
 		"size"			=> '',
 		"default"		=> __( 'Read more...', 'themple-starter' ),
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_option_array );
 
@@ -346,7 +335,6 @@ $tpl_option_array = array (
 		"type"			=> 'tinymce',
 		"size"			=> 3,
 		"default"		=> __( '&copy; Copyright 2016', 'themple-starter' ),
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_option_array );
 
@@ -359,6 +347,5 @@ $tpl_option_array = array (
 		"section"		=> 'other',
 		"type"			=> 'date',
 		"default"		=> '2017-01-17',
-		"repeat"=>true,
 );
 tpl_register_option ( $tpl_option_array );
