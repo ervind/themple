@@ -3,7 +3,7 @@
 Plugin Name: Themple Helper
 Plugin URI:  http://a-idea.studio/themple-framework
 Description: A helper plugin for the Themple Framework. It adds extra stuff that a standard WP theme can't contain. Also makes it easier to switch from a Themple-based theme to another.
-Version:     1.2b
+Version:     1.2
 Author:      a-idea studio
 Author URI:  http://a-idea.studio/
 License:     GNU General Public License v2.0
@@ -145,7 +145,7 @@ add_action ( 'init', function() {
 	if ( function_exists( 'tpl_register_pb_app' ) ) {
 		tpl_register_pb_app( array(
 			'name'		=> 'tpl_toggle',
-			'title'		=> __( 'Toggle shortcode (Helper)', 'themple-helper' ),
+			'title'		=> __( 'Toggle shortcode', 'themple-helper' ),
 			'class'		=> 'TPL_PB_Toggle',
 			'pos'		=> 65,
 		) );
@@ -195,6 +195,12 @@ class TPL_PB_Toggle {
 			),
 		);
 
+	}
+
+
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '<i class="fa fa-2x fa-window-maximize"></i> [apps/toggles/toggle_title/tpl-preview-1] &hellip;';
 	}
 
 
@@ -279,7 +285,7 @@ add_action ( 'init', function() {
 	if ( function_exists( 'tpl_register_pb_app' ) ) {
 		tpl_register_pb_app( array(
 			'name'		=> 'tpl_accordion',
-			'title'		=> __( 'Accordion shortcode (Helper)', 'themple-helper' ),
+			'title'		=> __( 'Accordion shortcode', 'themple-helper' ),
 			'class'		=> 'TPL_PB_Accordion',
 			'pos'		=> 64,
 		) );
@@ -298,7 +304,7 @@ class TPL_PB_Accordion {
 			array(
 				"name"			=> 'accordion_default_state',
 				"title"			=> __( 'Default State', 'themple-helper' ),
-				"description"	=> __( 'The number of the panel that should be open by default, starting from 0. Use a negative number to close all panels.', 'themple-helper' ),
+				"description"	=> __( 'The number of the panel which is open by default, starting from 0. Use a negative number to close all panels.', 'themple-helper' ),
 				"type"			=> 'number',
 				"default"		=> 0,
 			),
@@ -326,6 +332,12 @@ class TPL_PB_Accordion {
 			),
 		);
 
+	}
+
+
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '<i class="fa fa-2x fa-list-alt"></i> [apps/accordion_panels/accordion_panel_title/tpl-preview-1] &hellip;';
 	}
 
 

@@ -41,11 +41,12 @@ add_action ( 'update_option_tpl_framework_options', 'tpl_make_css' );
 add_action ( 'admin_init', 'tpl_theme_options_message' );
 
 
-// Enqueue front end scripts and styles
+// Enqueue front end scripts
 add_action ( 'get_footer', 'tpl_front_scripts' );
 // Pass vars to JS from options
 add_action( 'get_footer', 'tpl_vars_to_js' );
-
+// Front end styles
+add_action ( 'wp_enqueue_scripts', 'tpl_front_styles' );
 
 // Comment reply script
 add_action( 'comment_form_before', 'tpl_comment_reply_script' );
@@ -485,6 +486,17 @@ function tpl_remove_cssjs_ver( $src ) {
 // Load the scripts needed in the front-end
 function tpl_front_scripts() {
 
+	if ( file_exists( tpl_base_dir() . '/script/script.js' ) ) {
+		wp_enqueue_script( 'tpl-script', tpl_base_uri() . '/script/script.js', array( 'jquery' ), THEMPLE_VERSION, true );
+	}
+
+}
+
+
+
+// Load the front-end styles
+function tpl_front_styles() {
+
 	// If we're using a multisite network, make sure that we're loading the current site's CSS file
 	if ( is_multisite() ) {
 		$ms_addition = '-' . get_current_blog_id();
@@ -493,10 +505,8 @@ function tpl_front_scripts() {
 		$ms_addition = '';
 	}
 
-	wp_enqueue_style( 'tpl-front-style', tpl_base_uri() . '/style/css/theme' . $ms_addition . '.css', array(), THEMPLE_VERSION );
-
-	if ( file_exists( tpl_base_dir() . '/script/script.js' ) ) {
-		wp_enqueue_script( 'tpl-script', tpl_base_uri() . '/script/script.js', array( 'jquery' ), THEMPLE_VERSION, true );
+	if ( file_exists( tpl_base_dir() . '/style/css/theme' . $ms_addition . '.css' ) ) {
+		wp_enqueue_style( 'tpl-front-style', tpl_base_uri() . '/style/css/theme' . $ms_addition . '.css', array(), THEMPLE_VERSION );
 	}
 
 }

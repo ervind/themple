@@ -30,8 +30,6 @@ class TPL_Font_Awesome extends TPL_Select {
 			$fa_icons[$icon["id"]] = $icon["name"];
 		}
 
-		ksort( $fa_icons );
-
 		$args["values"] = $fa_icons;
 
 		if ( !isset( $args["admin_class"] ) ) {

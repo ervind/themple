@@ -1,12 +1,12 @@
 /*!
- *  Font Awesome 4.6.2 by @davegandy - http://fontawesome.io - @fontawesome
+ *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('http://localhost/themple/wp-content/themes/themple-starter/framework/lib/font-awesome/fonts/fontawesome-webfont.woff?v=4.6.2') format('woff');
+  src: url('http://localhost/themple/wp-content/themes/themple-starter/framework/lib/font-awesome/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -1831,6 +1831,7 @@
   content: "\f23e";
 }
 .fa-battery-4:before,
+.fa-battery:before,
 .fa-battery-full:before {
   content: "\f240";
 }
@@ -2169,6 +2170,151 @@
 .fa-themeisle:before {
   content: "\f2b2";
 }
+.fa-google-plus-circle:before,
+.fa-google-plus-official:before {
+  content: "\f2b3";
+}
+.fa-fa:before,
+.fa-font-awesome:before {
+  content: "\f2b4";
+}
+.fa-handshake-o:before {
+  content: "\f2b5";
+}
+.fa-envelope-open:before {
+  content: "\f2b6";
+}
+.fa-envelope-open-o:before {
+  content: "\f2b7";
+}
+.fa-linode:before {
+  content: "\f2b8";
+}
+.fa-address-book:before {
+  content: "\f2b9";
+}
+.fa-address-book-o:before {
+  content: "\f2ba";
+}
+.fa-vcard:before,
+.fa-address-card:before {
+  content: "\f2bb";
+}
+.fa-vcard-o:before,
+.fa-address-card-o:before {
+  content: "\f2bc";
+}
+.fa-user-circle:before {
+  content: "\f2bd";
+}
+.fa-user-circle-o:before {
+  content: "\f2be";
+}
+.fa-user-o:before {
+  content: "\f2c0";
+}
+.fa-id-badge:before {
+  content: "\f2c1";
+}
+.fa-drivers-license:before,
+.fa-id-card:before {
+  content: "\f2c2";
+}
+.fa-drivers-license-o:before,
+.fa-id-card-o:before {
+  content: "\f2c3";
+}
+.fa-quora:before {
+  content: "\f2c4";
+}
+.fa-free-code-camp:before {
+  content: "\f2c5";
+}
+.fa-telegram:before {
+  content: "\f2c6";
+}
+.fa-thermometer-4:before,
+.fa-thermometer:before,
+.fa-thermometer-full:before {
+  content: "\f2c7";
+}
+.fa-thermometer-3:before,
+.fa-thermometer-three-quarters:before {
+  content: "\f2c8";
+}
+.fa-thermometer-2:before,
+.fa-thermometer-half:before {
+  content: "\f2c9";
+}
+.fa-thermometer-1:before,
+.fa-thermometer-quarter:before {
+  content: "\f2ca";
+}
+.fa-thermometer-0:before,
+.fa-thermometer-empty:before {
+  content: "\f2cb";
+}
+.fa-shower:before {
+  content: "\f2cc";
+}
+.fa-bathtub:before,
+.fa-s15:before,
+.fa-bath:before {
+  content: "\f2cd";
+}
+.fa-podcast:before {
+  content: "\f2ce";
+}
+.fa-window-maximize:before {
+  content: "\f2d0";
+}
+.fa-window-minimize:before {
+  content: "\f2d1";
+}
+.fa-window-restore:before {
+  content: "\f2d2";
+}
+.fa-times-rectangle:before,
+.fa-window-close:before {
+  content: "\f2d3";
+}
+.fa-times-rectangle-o:before,
+.fa-window-close-o:before {
+  content: "\f2d4";
+}
+.fa-bandcamp:before {
+  content: "\f2d5";
+}
+.fa-grav:before {
+  content: "\f2d6";
+}
+.fa-etsy:before {
+  content: "\f2d7";
+}
+.fa-imdb:before {
+  content: "\f2d8";
+}
+.fa-ravelry:before {
+  content: "\f2d9";
+}
+.fa-eercast:before {
+  content: "\f2da";
+}
+.fa-microchip:before {
+  content: "\f2db";
+}
+.fa-snowflake-o:before {
+  content: "\f2dc";
+}
+.fa-superpowers:before {
+  content: "\f2dd";
+}
+.fa-wpexplorer:before {
+  content: "\f2de";
+}
+.fa-meetup:before {
+  content: "\f2e0";
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -2393,7 +2539,7 @@ tr:last-child .tpl-optiondesc {
 .tpl-repeat-header.tpl-repeat-header-closed {
   border-bottom: 0;
 }
-.tpl-repeat-header > * {
+.tpl-repeat-header * {
   line-height: 40px;
 }
 .tpl-repeat-header .tpl-admin-icon {
@@ -2401,6 +2547,13 @@ tr:last-child .tpl-optiondesc {
   color: #bbb;
   background: #ddd;
   height: 100%;
+}
+.tpl-repeat-header .tpl-header-title-preview * {
+  vertical-align: middle;
+}
+.tpl-repeat-header .tpl-header-title-preview i {
+  margin-bottom: 4px;
+  margin-right: 6px;
 }
 .tpl-header-title {
   width: 100%;
@@ -2491,6 +2644,9 @@ tr:last-child .tpl-optiondesc {
   .tpl-meta-option .tpl-button-container {
     width: 100%;
   }
+  .tpl-meta-option .tpl-meta-option-label {
+    padding-bottom: 6px;
+  }
   .tpl-meta-option button {
     margin-top: 12px;
     margin-bottom: 12px;
@@ -2500,12 +2656,6 @@ tr:last-child .tpl-optiondesc {
   }
   .tpl-repeat > .tpl-field-inner {
     padding: 12px;
-  }
-  .tpl-arranger {
-    padding: 0 10px 0 12px;
-  }
-  .tpl-remover {
-    padding: 0 12px 0 10px;
   }
 }
 @media (max-width: 1040px) {
@@ -2600,10 +2750,14 @@ textarea {
   cursor: pointer;
 }
 .tpl-image-preview {
-  height: 38px;
+  height: 30px;
   width: auto;
   vertical-align: middle;
-  padding-bottom: 5px;
+  margin-bottom: 4px;
+  margin-right: 6px;
+}
+.tpl-img-placeholder {
+  cursor: pointer;
 }
 .tpl-datatype-container label[class*=checked-] {
   width: 1em;
@@ -2761,7 +2915,8 @@ textarea {
   width: 60px;
   height: 20px;
   vertical-align: middle;
-  margin-right: 10px;
+  margin-right: 15px;
+  margin-bottom: 4px;
   border-right: 2px solid #bbb;
 }
 .select2-selection .tpl-columnset-structure {

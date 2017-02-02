@@ -8,7 +8,7 @@ For more information and documentation, visit [https://a-idea.studio/themple-fra
 
 
 // Version number of the framework
-define( 'THEMPLE_VERSION', '1.2b' );
+define( 'THEMPLE_VERSION', '1.2' );
 
 // Loading basic configuration for this installation
 require_once "themple-config.php";

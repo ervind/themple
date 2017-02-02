@@ -17,15 +17,6 @@ $tpl_option_array = array (
 tpl_register_option ( $tpl_option_array );
 
 
-// The maximum width of the website
-$tpl_option_array = array (
-        "name"			=> 'try',
-        "title"			=> __( 'Font try', 'themple-starter' ),
-        "section"		=> 'general',
-        "type"			=> 'font_awesome',
-);
-tpl_register_option ( $tpl_option_array );
-
 // The basic font definition - a combined field with more sub-settings
 $tpl_option_array = array (
         "name"			=> 'basic_font',
@@ -80,24 +71,6 @@ $tpl_option_array = array (
 				"description"	=> __( 'You can modify the main body text color here.', 'themple-starter' ),
 				"type"			=> 'color',
 				"default"		=> '#666666',
-			),
-			array(
-				"name"			=> 'dummy',
-				"title"			=> __( 'Dummy', 'themple-starter' ),
-				"type"			=> 'combined',
-				"repeat"		=> true,
-				"parts"			=> array(
-					array(
-						"name"			=> 'dummy1',
-						"title"			=> __( 'Dummy text', 'themple-starter' ),
-						"type"			=> 'text',
-					),
-					array(
-						"name"			=> 'dummy2',
-						"title"			=> __( 'Dummy color', 'themple-starter' ),
-						"type"			=> 'color',
-					),
-				),
 			),
 		),
 );
@@ -332,7 +305,7 @@ $tpl_option_array = array (
 		"title"			=> __( 'Copyright Text', 'themple-starter' ),
 		"description"	=> __( 'Copyright Text in the footer\'s bottom line.', 'themple-starter' ),
 		"section"		=> 'footer',
-		"type"			=> 'tinymce',
+		"type"			=> 'textarea',
 		"size"			=> 3,
 		"default"		=> __( '&copy; Copyright 2016', 'themple-starter' ),
 );

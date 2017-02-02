@@ -75,6 +75,12 @@ class TPL_PB_Shortcode {
 	}
 
 
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '<i class="fa fa-2x fa-code"></i> [apps/shortcode_name/tpl-preview-1]';
+	}
+
+
 	// Frontend output
 	public function frontend_value( $values = array() ) {
 

@@ -22,6 +22,12 @@ class TPL_PB_The_Content {
 	}
 
 
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '<i class="fa fa-2x fa-file-text"></i> The Content';
+	}
+
+
 	public function frontend_value( $values = array() ) {
 
 		return do_shortcode( wpautop( get_the_content() ) );

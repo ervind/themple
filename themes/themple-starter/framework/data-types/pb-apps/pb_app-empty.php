@@ -21,6 +21,12 @@ class TPL_PB_Empty {
 	}
 
 
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '(Empty)';
+	}
+
+
 	public function frontend_value( $values = array() ) {
 
 		return '';

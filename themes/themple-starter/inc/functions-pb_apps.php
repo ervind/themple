@@ -7,7 +7,7 @@
 add_action( 'init', function() {
 	tpl_register_pb_app( array(
 		'name'		=> 'the_excerpt',
-		'title'		=> __( 'The excerpt (Starter)', 'themple-starter' ),
+		'title'		=> __( 'The excerpt', 'themple-starter' ),
 		'class'		=> 'TPL_PB_The_Excerpt',
 		'pos'		=> 60,
 	) );
@@ -32,6 +32,12 @@ class TPL_PB_The_Excerpt {
 			),
 		);
 
+	}
+
+
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '<i class="fa fa-2x fa-file-text-o"></i> The Excerpt';
 	}
 
 

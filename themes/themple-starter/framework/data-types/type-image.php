@@ -93,7 +93,7 @@ class TPL_Image extends TPL_Data_Type {
 	public function format_option ( $value, $args = array() ) {
 
 		// Return the image ID if we force it to be unformatted
-		if ( $this->unformatted ) {
+		if ( isset( $this->unformatted ) && $this->unformatted ) {
 			return $value;
 		}
 

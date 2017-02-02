@@ -84,9 +84,13 @@ class TPL_Icon extends TPL_Combined {
 	}
 
 
-	public function form_field_before ( $extra_class = 'tpl-dt-combined' ) {
 
-		parent::form_field_before( $extra_class );
+	// Adding the necessary classes to the admin field
+	public function form_field_before ( $before_args ) {
+
+		$before_args["extra_class"] = 'tpl-dt-combined';
+
+		parent::form_field_before( $before_args );
 
 	}
 

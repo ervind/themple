@@ -37,6 +37,12 @@ class TPL_PB_Widget_Area {
 	}
 
 
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '<i class="fa fa-2x fa-clone"></i> [apps/widget_area/tpl-preview-1]';
+	}
+
+
 	// Frontend output
 	public function frontend_value( $values = array() ) {
 

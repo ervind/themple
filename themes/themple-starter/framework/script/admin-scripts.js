@@ -89,7 +89,7 @@ TABLE OF CONTENTS
 */
 
 	// Main uploader popup handler
-    $('body').on('click', '.tpl-uploader .button, .tpl-uploader .tpl-uploaded-image', function(e) {
+    $('body').on('click', '.tpl-uploader .button, .tpl-uploader .tpl-uploaded-image, .tpl-img-placeholder', function(e) {
 
         e.preventDefault();
 		var imgurl = $(this).parent().find('.tpl-uploaded-image');
@@ -117,6 +117,7 @@ TABLE OF CONTENTS
 			current_item.find('.tpl-img_id').val(attachment.id).trigger('change');
 			current_item.find('.tpl-img-placeholder').hide();
 			current_item.find('.tpl-closer').show();
+			tpl_set_repeater_headers();
         });
 
         //Open the uploader dialog
@@ -135,6 +136,7 @@ TABLE OF CONTENTS
         current_item.find('.tpl-uploaded-image').hide();
 		$(this).closest('.tpl-field').find('.tpl-img_id').val('').trigger('change');
 		$(this).hide();
+		tpl_set_repeater_headers();
 
 	});
 
@@ -592,6 +594,7 @@ TABLE OF CONTENTS
 		tpl_set_repeater_headers();
 	});
 
+	// Sets up the headers of the repeater field instances
 	function tpl_set_repeater_headers(){
 
 		$('.tpl-repeat').each(function(){
@@ -606,6 +609,15 @@ TABLE OF CONTENTS
 			}
 			else {
 				dt_class = tpl_get_type_class($(this)) + '_preview-template';
+			}
+			// Overrite the original plan if we have a PB App template
+			if ( $(this).is('.tpl-pb-apps') ) {
+				var current_data_name = $(this).attr('data-name');
+				var selected_app = $('[data-name="'+current_data_name+'/app_type"]', this).find('select').val();
+				var pre_dt_class = 'tpl-pb_app-'+selected_app+'_preview-template';
+				if ( typeof Themple_Admin[pre_dt_class] !== 'undefined' ) {
+					dt_class = pre_dt_class;
+				}
 			}
 
 			// Single field
@@ -700,6 +712,11 @@ TABLE OF CONTENTS
 
 			// Finally, setting up the repeater header
 			$('.tpl-header-title-preview', this).html(preview);
+
+			if ($(this).is('.tpl-pb-apps')) {
+				tpl_highlight_pb_column();
+			}
+
 
 		});
 
@@ -1128,14 +1145,16 @@ TABLE OF CONTENTS
 	tpl_condition_updater();
 	tpl_tinymce_init();
 
-	$('body').on('change', 'select', function(){
+	$('body').on('change', 'select, input, textarea', function(){
 		tpl_condition_updater();
 		tpl_set_repeater_headers();
 	});
 
 	$('body').on('keyup', 'input, textarea', function(){
-		tpl_condition_updater();
-		tpl_set_repeater_headers();
+		// Because the condition updater is a resource-heavy operation, run it only if the value length is 0 or 1
+		if ( $(this).val().length < 2 ) {
+			tpl_condition_updater();
+		}
 	});
 
 

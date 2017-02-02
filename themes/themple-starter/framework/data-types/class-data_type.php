@@ -124,6 +124,9 @@ class TPL_Data_Type {
 	public function form_field ( $for_bank = false ) {
 
 		$path_i = $this->get_level() * 2 + 1;
+		$before_args = array(
+			'for_bank'	=> $for_bank,
+		);
 
 		if ( !$this->is_subitem ) {
 			$this->path = array( 0 => $this->name );
@@ -150,7 +153,7 @@ class TPL_Data_Type {
 
 					// Now the path is set up
 
-					$this->form_field_before();
+					$this->form_field_before( $before_args );
 					$this->form_field_content( $for_bank );
 					$this->form_field_after();
 
@@ -172,7 +175,7 @@ class TPL_Data_Type {
 
 			// Now the path is set up
 
-			$this->form_field_before();
+			$this->form_field_before( $before_args );
 			$this->form_field_content( $for_bank );
 			$this->form_field_after();
 
@@ -182,7 +185,11 @@ class TPL_Data_Type {
 
 
 	// Container start of the form field
-	public function form_field_before ( $extra_class = '' ) {
+	public function form_field_before ( $before_args ) {
+
+		if ( !isset( $before_args["extra_class"] ) ) {
+			$before_args["extra_class"] = '';
+		}
 
 		$path_i = $this->get_level() * 2 + 1;
 
@@ -194,17 +201,17 @@ class TPL_Data_Type {
 		}
 
 		if ( $this->repeat !== false ) {
-			$extra_class .= ' tpl-repeat';
+			$before_args["extra_class"] .= ' tpl-repeat';
 		}
 
 		// Extra admin classes if needed
 		if ( $this->admin_class != '' ) {
-			$extra_class .= ' ' . $this->admin_class;
+			$before_args["extra_class"] .= ' ' . $this->admin_class;
 		}
 
 		// If child item of a combined field
 		if ( $this->is_subitem ) {
-			$extra_class .= ' tpl-subitem';
+			$before_args["extra_class"] .= ' tpl-subitem';
 		}
 
 		// Which condition is it connected to if there's any
@@ -213,16 +220,29 @@ class TPL_Data_Type {
 			$data_connected = ' data-connected="' . esc_attr( $this->condition_connected ) . '"';
 		}
 
-		$class = preg_replace( '/\s+/', ' ', 'tpl-field tpl-dt-'. $this->type . ' ' . $extra_class  );
+		$class = preg_replace( '/\s+/', ' ', 'tpl-field tpl-dt-'. $this->type . ' ' . $before_args["extra_class"]  );
 
 		echo '<div class="' . esc_attr( $class ) . '" data-instance="' . esc_attr( $data_instance ) . '" data-name="' . esc_attr( $this->data_name ) . '" data-level="' . esc_attr( $this->get_level() ) . '"' . $data_connected . '>';
 
+		// Repeater fields
 		if ( $this->repeat !== false ) {
 
-			echo '<div class="tpl-repeat-header tpl-repeat-header-closed">
+			// If it goes for the repeater bank, keep it open (newly added instances are displayed open by default)
+			if ( $before_args["for_bank"] ) {
+				$header_state_class = '';
+				$toggle_class = ' tpl-toggle-close';
+				$toggle_title = __( 'Minimize', 'themple' );
+			}
+			else {
+				$header_state_class = ' tpl-repeat-header-closed';
+				$toggle_class = ' tpl-toggle-open';
+				$toggle_title = __( 'Maximize', 'themple' );
+			}
+
+			echo '<div class="tpl-repeat-header' . $header_state_class . '">
 					<div class="tpl-admin-icon tpl-arranger" title="' . __( 'Drag & Drop to reorder', 'themple' ) . '"></div>
 					<div class="tpl-header-title"><span class="tpl-header-title-instance">(#' . $data_instance . ')</span><span class="tpl-header-title-preview"></span></div>
-					<div class="tpl-admin-icon tpl-toggle tpl-toggle-open" title="' . __( 'Maximize', 'themple' ) . '"></div>';
+					<div class="tpl-admin-icon tpl-toggle' . $toggle_class . '" title="' . $toggle_title . '"></div>';
 
 			if ( !isset( $this->repeat["number"] ) ) {
 				echo '<div class="tpl-admin-icon tpl-remover" title="' . __( 'Remove row', 'themple' ) . '"></div>';
@@ -233,7 +253,7 @@ class TPL_Data_Type {
 		}
 
 		echo '<div class="tpl-field-inner';
-		if ( $this->repeat ) {
+		if ( $this->repeat && !$before_args["for_bank"] ) {
 			echo ' tpl-admin-hide';
 		}
 		echo '">';

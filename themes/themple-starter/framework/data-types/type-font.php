@@ -39,9 +39,11 @@ class TPL_Font extends TPL_Select {
 
 
 	// Adding the necessary classes to the admin field
-	public function form_field_before ( $extra_class = 'tpl-dt-font tpl-dt-select' ) {
+	public function form_field_before ( $before_args ) {
 
-		parent::form_field_before( $extra_class );
+		$before_args["extra_class"] = 'tpl-dt-select';
+
+		parent::form_field_before( $before_args );
 
 	}
 

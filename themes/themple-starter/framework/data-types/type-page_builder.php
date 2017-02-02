@@ -124,7 +124,6 @@ class TPL_Page_Builder extends TPL_Combined {
 				"admin_class"	=> 'tpl-pb-apps',
 				"preview"		=> '[apps/app_type/tpl-preview-1]',
 				"parts"			=> $apps_array,
-				"preview"		=> '[apps/app_type/tpl-preview-1]',
 			),
 		);
 
@@ -143,11 +142,13 @@ class TPL_Page_Builder extends TPL_Combined {
 
 
 	// Same as the parent's form_field_before, but with other classes added
-	public function form_field_before ( $extra_class = 'tpl-dt-combined tpl-preview-multi' ) {
+	public function form_field_before ( $before_args ) {
+
+		$before_args["extra_class"] = 'tpl-dt-combined tpl-preview-multi';
 
 		$this->set_columns_number();
 
-		parent::form_field_before( $extra_class );
+		parent::form_field_before( $before_args );
 
 	}
 
@@ -198,6 +199,10 @@ class TPL_Page_Builder extends TPL_Combined {
 				}
 				else {
 					$extra_class = '';
+				}
+
+				if ( isset( $value["section_settings"][0]["title"] ) && $value["section_settings"][0]["title"] ) {
+					$extra_class .= ' tpl-pb-section-with-title';
 				}
 
 				$result[$i] = '<section class="tpl-pb-section' . $extra_class . '" style="';
@@ -319,6 +324,17 @@ class TPL_Page_Builder extends TPL_Combined {
 
 	// Strings to be added to the admin JS files
 	public function admin_js_strings( $strings ) {
+
+		global $tpl_pb_apps;
+
+		foreach ( $tpl_pb_apps as $app ) {
+			$class_name = $app["class"];
+			$app_obj = new $class_name();
+
+			if ( method_exists( $app_obj, 'get_preview' ) ) {
+				$strings["tpl-pb_app-".$app["name"]."_preview-template"] = $app_obj->get_preview();
+			}
+		}
 
 		$strings = array_merge( $strings, array(
 			'pb_fewer_instances'			=> __( 'The columnset you have just selected contains fewer columns than the previous setting. It means that the last ##N## column(s) will be removed with all their contents. Do you want to proceed?', 'themple' ),

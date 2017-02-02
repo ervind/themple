@@ -30,6 +30,12 @@ class TPL_PB_Image {
 	}
 
 
+	// Preview in admin
+	public function get_preview( $values = array() ) {
+		return '<img src="[apps/image_selector/tpl-preview-0]" class="tpl-image-preview"> Image';
+	}
+
+
 	// Frontend output
 	public function frontend_value( $values = array() ) {
 
